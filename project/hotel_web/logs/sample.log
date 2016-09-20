@@ -1,0 +1,28 @@
+2016.09.19 18:11:34 CST DEBUG net.bull.javamelody.Log4J2Logger 56 debug - spring interceptor initialized
+2016.09.19 18:11:34 CST ERROR com.alibaba.druid.support.logging.Log4j2Impl 58 error - load filter error, filter not found : log4j2
+2016.09.19 18:11:34 CST DEBUG net.bull.javamelody.Log4J2Logger 56 debug - Spring datasource wrapped: druidDateSource
+2016.09.19 18:11:34 CST DEBUG org.apache.ibatis.logging.LogFactory 128 setImplementation - Logging initialized using 'class org.apache.ibatis.logging.slf4j.Slf4jImpl' adapter.
+2016.09.19 18:11:34 CST DEBUG org.mybatis.spring.SqlSessionFactoryBean 365 buildSqlSessionFactory - Property 'configLocation' not specified, using default MyBatis Configuration
+2016.09.19 18:11:34 CST DEBUG org.mybatis.spring.SqlSessionFactoryBean 404 buildSqlSessionFactory - Registered plugin: 'com.github.pagehelper.PageHelper@6f099cef'
+2016.09.19 18:11:34 CST DEBUG org.mybatis.spring.SqlSessionFactoryBean 479 buildSqlSessionFactory - Property 'mapperLocations' was not specified or no matching resources found
+2016.09.20 01:11:26 CST DEBUG net.bull.javamelody.Log4J2Logger 56 debug - spring interceptor initialized
+2016.09.20 01:11:27 CST ERROR com.alibaba.druid.support.logging.Log4j2Impl 58 error - load filter error, filter not found : log4j2
+2016.09.20 01:11:27 CST DEBUG net.bull.javamelody.Log4J2Logger 56 debug - Spring datasource wrapped: druidDateSource
+2016.09.20 01:11:27 CST DEBUG org.apache.ibatis.logging.LogFactory 128 setImplementation - Logging initialized using 'class org.apache.ibatis.logging.slf4j.Slf4jImpl' adapter.
+2016.09.20 01:11:27 CST DEBUG org.mybatis.spring.SqlSessionFactoryBean 365 buildSqlSessionFactory - Property 'configLocation' not specified, using default MyBatis Configuration
+2016.09.20 01:11:27 CST DEBUG org.mybatis.spring.SqlSessionFactoryBean 404 buildSqlSessionFactory - Registered plugin: 'com.github.pagehelper.PageHelper@3f36b447'
+2016.09.20 01:11:27 CST DEBUG org.mybatis.spring.SqlSessionFactoryBean 479 buildSqlSessionFactory - Property 'mapperLocations' was not specified or no matching resources found
+2016.09.20 01:38:09 CST DEBUG net.bull.javamelody.Log4J2Logger 56 debug - spring interceptor initialized
+2016.09.20 01:38:09 CST ERROR com.alibaba.druid.support.logging.Log4j2Impl 58 error - load filter error, filter not found : log4j2
+2016.09.20 01:38:09 CST DEBUG net.bull.javamelody.Log4J2Logger 56 debug - Spring datasource wrapped: druidDateSource
+2016.09.20 01:38:09 CST DEBUG org.apache.ibatis.logging.LogFactory 128 setImplementation - Logging initialized using 'class org.apache.ibatis.logging.slf4j.Slf4jImpl' adapter.
+2016.09.20 01:38:09 CST DEBUG org.mybatis.spring.SqlSessionFactoryBean 365 buildSqlSessionFactory - Property 'configLocation' not specified, using default MyBatis Configuration
+2016.09.20 01:38:09 CST DEBUG org.mybatis.spring.SqlSessionFactoryBean 404 buildSqlSessionFactory - Registered plugin: 'com.github.pagehelper.PageHelper@19593091'
+2016.09.20 01:38:09 CST DEBUG org.mybatis.spring.SqlSessionFactoryBean 479 buildSqlSessionFactory - Property 'mapperLocations' was not specified or no matching resources found
+2016.09.20 01:39:10 CST DEBUG net.bull.javamelody.Log4J2Logger 56 debug - spring interceptor initialized
+2016.09.20 01:39:10 CST ERROR com.alibaba.druid.support.logging.Log4j2Impl 58 error - load filter error, filter not found : log4j2
+2016.09.20 01:39:10 CST DEBUG net.bull.javamelody.Log4J2Logger 56 debug - Spring datasource wrapped: druidDateSource
+2016.09.20 01:39:10 CST DEBUG org.apache.ibatis.logging.LogFactory 128 setImplementation - Logging initialized using 'class org.apache.ibatis.logging.slf4j.Slf4jImpl' adapter.
+2016.09.20 01:39:10 CST DEBUG org.mybatis.spring.SqlSessionFactoryBean 365 buildSqlSessionFactory - Property 'configLocation' not specified, using default MyBatis Configuration
+2016.09.20 01:39:10 CST DEBUG org.mybatis.spring.SqlSessionFactoryBean 404 buildSqlSessionFactory - Registered plugin: 'com.github.pagehelper.PageHelper@19593091'
+2016.09.20 01:39:10 CST DEBUG org.mybatis.spring.SqlSessionFactoryBean 479 buildSqlSessionFactory - Property 'mapperLocations' was not specified or no matching resources found

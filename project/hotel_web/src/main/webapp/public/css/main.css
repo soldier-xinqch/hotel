@@ -1,0 +1,28 @@
+
+/* 重置默认样式--可以导入别人已经写好的reset.css文件 */
+/* *{margin: 0;padding: 0;} */
+
+#mainBg{
+	background-image: url("/public/images/vague2.jpg"); 
+	background-repeat: no-repeat;
+}
+.clickImg{
+	cursor:pointer;
+}
+/*登录页面样式*/
+#loginBg{
+	background-image: url("/public/images/login-bg.jpg"); 
+	background-repeat: no-repeat;
+	width: 100%;
+	height: 100%;
+}
+
+.f_rigt{
+	float:right;
+}
+.f_left{
+	float:left;
+}
+
+
+
