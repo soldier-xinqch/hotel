@@ -23,7 +23,8 @@ import com.github.bingoohuang.patchca.word.RandomWordFactory;
 
 public class VaildCodeUtil {
 
-	private static final String DEFAULT_CHARACTERS = "123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"; // 自己设置！
+	private static final String DEFAULT_CHARACTERS = "0123456789";
+//			"123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"; // 自己设置！
 	
 	private ConfigurableCaptchaService captchaService = null;
 	private RandomColorFactory colorFactory = null;

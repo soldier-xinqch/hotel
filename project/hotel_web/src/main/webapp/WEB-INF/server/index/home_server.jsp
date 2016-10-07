@@ -9,14 +9,15 @@
 	</head>
 
 	<body>
-		<%@ include file="/common/include/head_title.jsp"%>
+		<jsp:include page="/home/title" />
 		<div class="main-container" id="main-container">
 			<script type="text/javascript">
 				try{ace.settings.check('main-container' , 'fixed')}catch(e){}
 			</script>
 
 			<div class="main-container-inner">
-				<%@ include file="/common/include/left_menu.jsp"%>
+				<%-- <%@ include file="/common/include/left_menu.jsp"%> --%>
+				<jsp:include page="/menu/index/${menuKey}" />
 				<div class="main-content">
 					<div class="breadcrumbs" id="breadcrumbs">
 						<script type="text/javascript">

@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.hotel.mapper.MenuMapper">
+	<!-- <cache type="org.mybatis.caches.ehcache.LoggingEhcache"> 
+	    <property name="timeToIdleSeconds" value="3600" />1 hour
+	    <property name="timeToLiveSeconds" value="3600" />1 hour
+	    <property name="maxEntriesLocalHeap" value="1000" />
+	    <property name="maxEntriesLocalDisk" value="10000000" />
+	    <property name="memoryStoreEvictionPolicy" value="LRU" />
+	</cache> -->
+  <resultMap id="BaseResultMap" type="org.hotel.model.Menu">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="menu_name" jdbcType="VARCHAR" property="menuName" />
+    <result column="menu_flag" jdbcType="VARCHAR" property="menuFlag" />
+    <result column="menu_style" jdbcType="VARCHAR" property="menuStyle" />
+    <result column="menu_url" jdbcType="VARCHAR" property="menuUrl" />
+    <result column="menu_level" jdbcType="VARCHAR" property="menuLevel" />
+    <result column="menu_Icon" jdbcType="VARCHAR" property="menuIcon" />
+    <result column="menu_status" jdbcType="VARCHAR" property="menuStatus" />
+    <result column="menu_org_id" jdbcType="VARCHAR" property="menuOrgId" />
+    <result column="menu_parent_id" jdbcType="VARCHAR" property="menuParentId" />
+    <result column="menu_parent_name" jdbcType="VARCHAR" property="menuParentName" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modify_user" jdbcType="VARCHAR" property="modifyUser" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+    <result column="del_flag" jdbcType="TINYINT" property="delFlag" />
+    <result column="menu_index" jdbcType="INTEGER" property="menuIndex" />
+    <result column="menu_desc" jdbcType="VARCHAR" property="menuDesc" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, menu_name, menu_flag, menu_style, menu_url, menu_level, menu_Icon, menu_status, 
+    menu_org_id, menu_parent_id, menu_parent_name, create_user, create_time, modify_user, 
+    modify_time, del_flag, menu_index, menu_desc
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from menu
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from menu
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insertSelective" parameterType="org.hotel.model.Menu">
+    insert into menu
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="menuName != null">
+        menu_name,
+      </if>
+      <if test="menuFlag != null">
+        menu_flag,
+      </if>
+      <if test="menuStyle != null">
+        menu_style,
+      </if>
+      <if test="menuUrl != null">
+        menu_url,
+      </if>
+      <if test="menuLevel != null">
+        menu_level,
+      </if>
+      <if test="menuIcon != null">
+        menu_Icon,
+      </if>
+      <if test="menuStatus != null">
+        menu_status,
+      </if>
+      <if test="menuOrgId != null">
+        menu_org_id,
+      </if>
+      <if test="menuParentId != null">
+        menu_parent_id,
+      </if>
+      <if test="menuParentName != null">
+        menu_parent_name,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="modifyUser != null">
+        modify_user,
+      </if>
+      <if test="modifyTime != null">
+        modify_time,
+      </if>
+      <if test="delFlag != null">
+        del_flag,
+      </if>
+      <if test="menuIndex != null">
+        menu_index,
+      </if>
+      <if test="menuDesc != null">
+        menu_desc,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="menuName != null">
+        #{menuName,jdbcType=VARCHAR},
+      </if>
+      <if test="menuFlag != null">
+        #{menuFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="menuStyle != null">
+        #{menuStyle,jdbcType=VARCHAR},
+      </if>
+      <if test="menuUrl != null">
+        #{menuUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="menuLevel != null">
+        #{menuLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="menuIcon != null">
+        #{menuIcon,jdbcType=VARCHAR},
+      </if>
+      <if test="menuStatus != null">
+        #{menuStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="menuOrgId != null">
+        #{menuOrgId,jdbcType=VARCHAR},
+      </if>
+      <if test="menuParentId != null">
+        #{menuParentId,jdbcType=VARCHAR},
+      </if>
+      <if test="menuParentName != null">
+        #{menuParentName,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyUser != null">
+        #{modifyUser,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null">
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        #{delFlag,jdbcType=TINYINT},
+      </if>
+      <if test="menuIndex != null">
+        #{menuIndex,jdbcType=INTEGER},
+      </if>
+      <if test="menuDesc != null">
+        #{menuDesc,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.hotel.model.Menu">
+    update menu
+    <set>
+      <if test="menuName != null">
+        menu_name = #{menuName,jdbcType=VARCHAR},
+      </if>
+      <if test="menuFlag != null">
+        menu_flag = #{menuFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="menuStyle != null">
+        menu_style = #{menuStyle,jdbcType=VARCHAR},
+      </if>
+      <if test="menuUrl != null">
+        menu_url = #{menuUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="menuLevel != null">
+        menu_level = #{menuLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="menuIcon != null">
+        menu_Icon = #{menuIcon,jdbcType=VARCHAR},
+      </if>
+      <if test="menuStatus != null">
+        menu_status = #{menuStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="menuOrgId != null">
+        menu_org_id = #{menuOrgId,jdbcType=VARCHAR},
+      </if>
+      <if test="menuParentId != null">
+        menu_parent_id = #{menuParentId,jdbcType=VARCHAR},
+      </if>
+      <if test="menuParentName != null">
+        menu_parent_name = #{menuParentName,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyUser != null">
+        modify_user = #{modifyUser,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null">
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        del_flag = #{delFlag,jdbcType=TINYINT},
+      </if>
+      <if test="menuIndex != null">
+        menu_index = #{menuIndex,jdbcType=INTEGER},
+      </if>
+      <if test="menuDesc != null">
+        menu_desc = #{menuDesc,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+	<select id="findAll" resultMap="BaseResultMap">
+	    select 
+	    <include refid="Base_Column_List" />
+	    from menu
+	    where del_flag=0
+	     order by menu_index 
+	  </select>
+	  <select id="findMenuByIds" parameterType="java.util.List" resultMap="BaseResultMap">
+	    select 
+	    <include refid="Base_Column_List" />
+	    from menu
+	    where del_flag=0
+	    and id in
+	    <foreach close=")" collection="list" index="" item="item" open="(" separator=",">  
+	     	 #{item, jdbcType=VARCHAR}  
+	    </foreach> 
+	     order by menu_index 
+	  </select>  
+	  
+	  <select id="findMenuByIdsAndlevel" parameterType="java.lang.String" resultMap="BaseResultMap">
+	    select 
+	    <include refid="Base_Column_List" />
+	    from menu
+	    where del_flag=0
+	    <if test="null != level and '' != level">
+	    	and menu_level = #{level,jdbcType=VARCHAR}
+	    </if>
+	    <if test="null != parentId and '' != parentId">
+	    	and menu_parent_id = #{parentId,jdbcType=VARCHAR}
+	    </if>
+	     order by menu_index 
+	  </select>
+	  <select id="findMenuByIdsAndlevelAndStatus" parameterType="java.lang.String" resultMap="BaseResultMap">
+	    select 
+	    <include refid="Base_Column_List" />
+	    from menu
+	    where del_flag=0
+	    <if test="null != level and '' != level">
+	    	and menu_level = #{level,jdbcType=VARCHAR}
+	    </if>
+	    <if test="null != parentId and '' != parentId">
+	    	and menu_parent_id = #{parentId,jdbcType=VARCHAR}
+	    </if>
+	    <if test="null != status and '' != status">
+	    	and menu_status = #{status,jdbcType=VARCHAR}
+	    </if>
+	    order by menu_index 
+	  </select>
+	  
+	  <select id="findMenusByFlag" parameterType="java.lang.String" resultMap="BaseResultMap">
+	    select 
+	    <include refid="Base_Column_List" />
+	    from menu
+	    where del_flag=0 and menu_flag = #{activeFlag,jdbcType=VARCHAR}
+	  </select>
+	  
+	  <select id="findParentMenus" parameterType="java.util.List" resultMap="BaseResultMap">
+	    select 
+	    <include refid="Base_Column_List" />
+	    from menu
+	    where del_flag=0
+	    and id in
+	    <foreach close=")" collection="list" index="" item="item" open="(" separator=",">  
+	     	 #{item.menuParentId, jdbcType=VARCHAR}  
+	    </foreach> 
+	     order by menu_index 
+	  </select>  
+	  
+	  <select id="findMenusByIdAndLevel" parameterType="java.util.List" resultMap="BaseResultMap">
+	    select 
+	    <include refid="Base_Column_List" />
+	    from menu
+	    where del_flag=0 and menu_level = #{level,jdbcType=VARCHAR}
+	    and id in
+	    <foreach close=")" collection="list" index="" item="item" open="(" separator=",">  
+	     	 #{item.id, jdbcType=VARCHAR}  
+	    </foreach> 
+	     order by menu_index 
+	  </select> 
+	  
+	  <select id="findMenuByOrgs" parameterType="java.util.List" resultMap="BaseResultMap">
+	    select 
+	    <include refid="Base_Column_List" />
+	    from menu
+	    where del_flag=0
+	    and menu_org_id in 
+	    <foreach close=")" collection="orgs" index="" item="item" open="(" separator=",">  
+	     	 #{item.id, jdbcType=VARCHAR}  
+	    </foreach> 
+	  </select>
+	  
+	  
+	  
+</mapper>

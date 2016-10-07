@@ -30,36 +30,35 @@
 		destroy-method="close">
 		<!-- 数据库基本信息配置 -->
         <property name="driverClassName" value="${mysql.driver}" />
-        <!-- <property name="url" value="jdbc:mysql://192.168.1.93:3306/mall_article?useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true&amp;failOverReadOnly=false" /> -->
         <property name="url" value="${mysql.url}" />
         <property name="username" value="${mysql.username}" />
         <property name="password" value="${mysql.password}" />       
         <!-- 初始化连接数量 -->
-        <property name="initialSize" value="5" />
+        <property name="initialSize" value ="${initialSize}" />
         <!-- 最大并发连接数 -->
-        <property name="maxActive" value="8" />
-        <!-- 最大空闲连接数
-        <property name="maxIdle" value="${druid.maxIdle}" /> -->
+        <property name="maxActive" value="${maxActive}" />
+        <!-- 最大空闲连接数 -->
+        <property name="maxIdle" value="${maxIdle}" /> 
         <!-- 最小空闲连接数 -->
-        <property name="minIdle" value="3" />
+        <property name="minIdle" value="${minIdle}" />
         <!-- 配置获取连接等待超时的时间 -->     
-        <property name="maxWait" value="6000" />
+        <property name="maxWait" value="${maxWait}" />
         <!-- 超过时间限制是否回收 -->
-        <property name="removeAbandoned" value="true" />
+        <property name="removeAbandoned" value="${removeAbandoned}" />
         <!-- 超过时间限制多长； -->
-        <property name="removeAbandonedTimeout" value="180" />
+        <property name="removeAbandonedTimeout" value="${removeAbandonedTimeout}" />
         <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
-        <property name="timeBetweenEvictionRunsMillis" value="60000" />
+        <property name="timeBetweenEvictionRunsMillis" value="${timeBetweenEvictionRunsMillis}" />
         <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
-        <property name="minEvictableIdleTimeMillis" value="300000" />
+        <property name="minEvictableIdleTimeMillis" value="${minEvictableIdleTimeMillis}" />
         <!-- 用来检测连接是否有效的sql，要求是一个查询语句-->
-        <property name="validationQuery" value="SELECT 1" />
+        <property name="validationQuery" value="${validationQuery}" />
         <!-- 申请连接的时候检测 -->
-        <property name="testWhileIdle" value="true" />
+        <property name="testWhileIdle" value="${testWhileIdle}" />
         <!-- 申请连接时执行validationQuery检测连接是否有效，配置为true会降低性能 -->
-        <property name="testOnBorrow" value="false" />
+        <property name="testOnBorrow" value="${testOnBorrow}" />
         <!-- 归还连接时执行validationQuery检测连接是否有效，配置为true会降低性能  -->
-        <property name="testOnReturn" value="false" />
+        <property name="testOnReturn" value="${testOnReturn}" />
         <!-- 打开PSCache，并且指定每个连接上PSCache的大小 -->
         <property name="poolPreparedStatements" value="true" />    
         <property name="maxPoolPreparedStatementPerConnectionSize" value="50" />
@@ -67,7 +66,7 @@
                      监控统计用的filter:stat
                	 日志用的filter:log4j
              	  防御SQL注入的filter:wall -->
-        <property name="filters" value="stat,log4j2" />  
+        <property name="filters" value="${filters}" />  
 	</bean>    
 	
 	<!-- 将数据源设置事物   如果定义的事务管理器名称为transactionManager，那么就可以直接使用<tx:annotation-driven/>-->
@@ -94,10 +93,18 @@
 		<property name="plugins" >
 			<array>
 				<bean class="com.github.pagehelper.PageHelper">
+					<!-- <property name="autoDialect" value="mysql"/>
+			        该参数默认为false
+			        设置为true时，会将RowBounds第一个参数offset当成pageNum页码使用
+			        和startPage中的pageNum效果一样
+			        <property name="offsetAsPageNum" value="true"/>
+			        该参数默认为false
+			        设置为true时，使用RowBounds分页会进行count查询
+			        <property name="rowBoundsWithCount" value="true"/> -->
 			        <property name="properties">
 			          <value>
-			            dialect=hsqldb
-			            reasonable=true
+			            dialect=mysql
+			            <!-- reasonable=true -->
 			          </value>
 			        </property>
 			      </bean>

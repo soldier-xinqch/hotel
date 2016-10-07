@@ -9,53 +9,105 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.2.xsd">
 
+    <!-- 自定义一个realm校验  -->
+    <bean id="userRealm" class="org.hotel.shiro.UserRealm" />
 
-    <!-- 保证实现了Shiro内部lifecycle函数的bean执行  	 Shiro生命周期处理器 -->  
-    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>  
-	<bean id="cacheManager" class="org.apache.shiro.cache.MemoryConstrainedCacheManager" />
-	<!-- 继承自AuthorizingRealm的自定义Realm,即指定Shiro验证用户登录的类为自定义的ShiroDbRealm.java -->  
-  	<!-- 用注解自动注入 -->
-  	<!-- <bean id="loginRealm" class="com.xinqch.shiro.realm.LoginRealm"/> -->
-    <!-- Shiro默认会使用Servlet容器的Session,可通过sessionMode属性来指定使用Shiro原生Session -->  
-    <!-- 即<property name="sessionMode" value="native"/>,详细说明见官方文档 -->  
-    <!-- 这里主要是设置自定义的单Realm应用,若有多个Realm,可使用'realms'属性代替 -->  
-    <!-- <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">  
-        <property name="realm" ref="loginRealm"/>
-         使用下面配置的缓存管理器  
-	    <property name="cacheManager" ref="cacheManager"/>
-    </bean> -->
-  
-    <!-- Shiro主过滤器本身功能十分强大,其强大之处就在于它支持任何基于URL路径表达式的、自定义的过滤器的执行 -->  
-    <!-- Web应用中,Shiro可控制的Web请求必须经过Shiro主过滤器的拦截,Shiro对基于Spring的Web应用提供了完美的支持 -->  
- <!--  <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">  --> 
-        <!-- Shiro的核心安全接口,这个属性是必须的 -->  
-      <!--   <property name="securityManager" ref="securityManager"/>   -->
-        <!-- 要求登录时的链接(可根据项目的URL进行替换),非必须的属性,默认会自动寻找Web工程根目录下的"/login.jsp"页面 -->  
-        <!-- <property name="loginUrl" value="/"/>  --> 
-        <!-- 登录成功后要跳转的连接(本例中此属性用不到,因为登录成功后的处理逻辑在LoginController里硬编码为main.jsp了) -->  
-      <!--   <property name="successUrl" value="/system/main"/>   -->
-        <!-- 用户访问未对其授权的资源时,所显示的连接  
-        若想更明显的测试此属性可以修改它的值,如unauthor.jsp,然后用[玄玉]登录后访问/admin/listUser.jsp就看见浏览器会显示unauthor.jsp -->  
-        <!-- <property name="unauthorizedUrl" value="/"/>   -->
-       <!--  <property name="filterChainDefinitions">  
-            <value>  
-            	/into/loginIndex=anon
-                /into/loginHome=anon
-                /into/**=authc   -->
-               <!--  /user/info**=authc  
-                /admin/listUser**=authc,perms[admin:manage]   -->
-            <!-- </value>  
-        </property>  
-    </bean>  -->
-  
-  	
-  
-    <!-- 开启Shiro的注解(如@RequiresRoles,@RequiresPermissions),需借助SpringAOP扫描使用Shiro注解的类,并在必要时进行安全逻辑验证 -->  
-    <!-- 配置以下两个bean即可实现此功能 -->  
-    <!-- Enable Shiro Annotations for Spring-configured beans. Only run after the lifecycleBeanProcessor has run -->  
-    <!-- 由于本例中并未使用Shiro注解,故注释掉这两个bean(个人觉得将权限通过注解的方式硬编码在程序中,查看起来不是很方便,没必要使用) -->  
-   <!--  <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" depends-on="lifecycleBeanPostProcessor"/>  
-    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">  
-        <property name="securityManager" ref="securityManager"/>  
-    </bean>   -->
+    <!-- sessionManager管理器 , 使用Ehcache实现 -->
+	<bean id="shiroCacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">  
+	    <property name="cacheManagerConfigFile" value="classpath:config/ehcache.xml"/>  
+	</bean> 
+	
+	<bean id="cacheManagerFactory"   class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">  
+        <property name="configLocation" value="classpath:config/ehcache.xml" />  
+        <property name="shared" value="true"></property> <!-- 这里是关键！！！没有必错  -->  
+    </bean> 
+    
+    <!-- 声明cacheManager -->  
+	<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager" p:cacheManager-ref="cacheManagerFactory" ></bean>  
+
+	<!-- 
+	会话ID生成器 
+	<bean id="sessionIdGenerator" class="org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator"/>  
+	会话DAO  
+	<bean id="sessionDAO" class="org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO">  
+	    <property name="activeSessionsCacheName" value="shiro-activeSessionCache"/>  
+	    <property name="sessionIdGenerator" ref="sessionIdGenerator"/>  
+	</bean>  
+	会话验证调度器  
+	<bean id="sessionValidationScheduler" class="org.apache.shiro.session.mgt.quartz.QuartzSessionValidationScheduler">  
+	    <property name="sessionValidationInterval" value="1800000"/>  
+	    <property name="sessionManager" ref="sessionManager"/>  
+	</bean>  
+	会话管理器  
+	<bean id="sessionManager" class="org.apache.shiro.session.mgt.DefaultSessionManager">  
+	    <property name="globalSessionTimeout" value="1800000"/>  
+	    <property name="deleteInvalidSessions" value="true"/>  
+	    <property name="sessionValidationSchedulerEnabled" value="false"/>  
+	    <property name="sessionValidationScheduler" ref="sessionValidationScheduler"/>  
+	    <property name="sessionDAO" ref="sessionDAO"/>  
+	    <property name="sessionIdCookieEnabled" value="true"/>  
+   		<property name="sessionIdCookie" ref="rememberMeCookie"/> 
+   		<property name="rememberMeManager" ref="rememberMeManager"/> 
+	</bean>  
+ -->
+
+
+
+    <!-- rememberMeManager管理器 -->
+    <bean id="rememberMeManager" class="org.apache.shiro.web.mgt.CookieRememberMeManager">
+        <property name="cookie" ref="rememberMeCookie" />
+    </bean>
+
+    <!-- rememberMeCookie管理器 -->
+    <bean id="rememberMeCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
+        <constructor-arg value="rememberMe" />
+        <property name="maxAge" value="-1" />
+        <!-- cookie 有效时间30天  -->
+        <!-- <property name="maxAge" value="2592000" /> -->
+        <property name="httpOnly" value="true"/>
+    </bean>
+    <!-- securityManager管理器 -->
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <property name="cacheManager" ref="shiroCacheManager" /> 
+        <property name="realm" ref="userRealm" />
+        <property name="rememberMeManager" ref="rememberMeManager" /> 
+        <!-- <property name="sessionManager" ref="sessionManager"/>  --> 
+    </bean>
+
+    <!-- 具体的 路径拦截器，登录验证路径在这里拦截 -->
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <property name="securityManager" ref="securityManager" />
+        <property name="loginUrl" value="/login/index" />
+        <property name="successUrl" value="/home/index" />
+        <!-- 未通过验证返回首页  -->
+        <property name="unauthorizedUrl" value="/"/>
+    	<property name="filters"> 
+    		<map>
+    			<entry key="authc">
+    				<bean class="org.hotel.shiro.ShiroFormFilter" />
+    			</entry>
+    		</map> 
+        </property>
+        <property name="filterChainDefinitions">
+            <value>
+                /plugins/**  = anon 
+                /public/** = anon
+                /css/**  = anon 
+                /login/** = anon 
+                /admin/shiro/unauthorized/*=anon<!-- webservice 接口 -->
+                /logout = logout <!-- 退出操作 -->
+                
+                /** = authc,user <!--已经登录验证通过或者通过rememberMe  -->
+            </value>
+        </property>
+    </bean>
+
+    <!-- 开启注解功能，验证失败， 其会抛出 UnauthorizedException异常， 此时可以使用 Spring的 ExceptionHandler处理-->
+    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+        <property name="securityManager" ref="securityManager" />
+    </bean>
+
+    <!-- 保证实现了Shiro内部lifecycle函数的bean执行 -->
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
+    
 </beans>

@@ -26,10 +26,35 @@
 		<link rel="stylesheet" href="/public/css/ace/ace-rtl.min.css" />
 		<link rel="stylesheet" href="/public/css/ace/ace-skins.min.css" />
 		<link rel="stylesheet" href="/public/css/mycustom.css" />
+		<link rel="stylesheet" href="/plugins/lobibox/lobibox.css" />
 		<style style="text/css">
 		.toolbar a{
 			text-decoration:none;
 		}
+		.fa-user,.fa-lock{
+			position: absolute;
+			line-height: 30px;
+			padding: 0 3px;
+			z-index: 2;
+			font-size: 17px;
+			left: 5px;
+			color: #909090;
+		}
+		.login-layout{
+			background-image: url("/public/images/bg1.jpg");
+			background-attachment:fixed;
+		}
+		/* div.glass{ 
+			background-image:url(./glass.jpg); 
+			background-attachment:fixed;
+			
+			position:absolute; 
+			top:100px; 
+			left:200px; 
+			width:300px; 
+			height:200px; 
+			overflow:hidden; 
+		}  */
 		</style>
 	</head>
 
@@ -39,38 +64,40 @@
 				<div class="row">
 					<div class="col-sm-10 col-sm-offset-1">
 						<div class="login-container">
-							<div class="center">
+							<%-- <div class="center">
 								<h1>
 									<span class="white">${systemName}(系统名称)</span>
 								</h1>
-							</div>
-							<div class="position-relative">
+							</div> --%>
+							<div class="position-relative" style="top: 200px;">
 								<div id="login-box" class="login-box visible widget-box no-border">
 									<div class="widget-body">
 										<div class="widget-main">
-											<h4 class="header blue lighter bigger">
+											<h3 class="header blue lighter bigger">
 												<i class="icon-coffee green"></i>
-												Please Enter Your Information
-											</h4>
-											<form action="/home/index" method="post">
+												宏业世纪 一体化平台
+											</h3>
+											<form id="login_form" action="/login/login" method="post">
 												<fieldset>
 													<label class="block clearfix">
 														<span class="block input-icon input-icon-left">
-															<span class="fa fa-user"></span>
+															<i class="fa fa-user"></i>
 															<input type="text" name="username" class="form-control" placeholder="请输入用户名……" />
 														</span>
 													</label>
 
 													<label class="block clearfix">
 														<span class="block input-icon input-icon-left">
-															<input type="password" name="passwd" class="form-control" placeholder="请输入密码……" />
 															<i class="fa fa-lock"></i>
+															<input type="password" name="password" class="form-control" placeholder="请输入密码……" />
+															
 														</span>
 													</label>
 													<label class="block clearfix ">
 														<span class="block input-icon input-icon-left" >
 															<input type="text" name="verufucatCode"  style="width: 60%" placeholder="请输入验证码……" />
-															<img id="validImage" style="width: 35%;margin-left: 5px;" alt="验证码图片"  src="<%=request.getContextPath()%>/valid/index">
+															<img id="validImage" style="width: 35%;margin-left: 5px;" alt="验证码图片"  
+															   onclick="reloadVerifyCode();"	src="<%=request.getContextPath()%>/login/verificat">
 														</span>
 													</label>
 													<div class="space"></div>
@@ -80,17 +107,23 @@
 															<input type="checkbox" class="ace" />
 															<span class="lbl"> 记住我</span>
 														</label>
-														<button type="submit" class="width-35 pull-right btn btn-sm btn-primary">
+														<!-- <button type="submit" class="width-35 pull-right btn btn-sm btn-primary">
+															<i class="icon-key"></i>
+															登录
+														</button> -->
+													</div>
+
+													<div class="space-4"></div>
+													<div class="toolbar clearfix" style="text-align: center;">
+														<button type="button" id="submitBtn" class="col-lg-12 pull-right btn btn-sm btn-primary">
 															<i class="icon-key"></i>
 															登录
 														</button>
 													</div>
-
-													<div class="space-4"></div>
 												</fieldset>
 											</form>
 
-											<div class="social-or-login center">
+											<!-- <div class="social-or-login center">
 												<span class="bigger-110">快捷登录</span>
 											</div>
 
@@ -106,10 +139,10 @@
 												<a class="btn btn-danger">
 													<i class="icon-google-plus"></i>
 												</a>
-											</div>
+											</div> -->
 										</div><!-- /widget-main -->
 
-										<div class="toolbar clearfix">
+										<!-- <div class="toolbar clearfix">
 											<div>
 												<a href="#" onclick="show_box('forgot-box'); return false;" class="forgot-password-link">
 													<i class="icon-hand-left"></i>
@@ -123,7 +156,7 @@
 													<i class="icon-hand-right"></i>
 												</a>
 											</div>
-										</div>
+										</div> -->
 									</div><!-- /widget-body -->
 								</div><!-- /login-box -->
 
@@ -249,6 +282,7 @@
 
 		<!-- basic scripts -->
 		<script type="text/javascript" src="/public/js/jquery-1.9.1/jquery.js"></script>
+		<script src="/plugins/lobibox/lobibox.js"></script> 
 		<!-- <script src="/plugins/jquery-mobile/jquery.mobile-1.4.5.js"></script> -->
 		<!-- inline scripts related to this page -->
 
@@ -257,6 +291,35 @@
 			 $('.widget-box.visible').removeClass('visible');
 			 $('#'+id).addClass('visible');
 			}
+			$("#validImage").bind('click',function(){
+				$("#validImage").attr('src','<%=request.getContextPath()%>/login/verificat?timestamp='+new Date());
+			});
+			$("#submitBtn").bind('click',function(){
+				 $.ajax({
+          		   type: "POST",
+          		   url:$("#login_form").attr('action'),
+          		   data: $("#login_form").serialize(),
+          		   success: function(data){
+          			   if('success' == data.type){
+          				   Lobibox.notify("success", {
+          		        		size: 'mini',
+          		        		position: 'center top',
+          		        		/* title: '登陆提示', */
+          		        		msg: data.message
+          		        	});
+          				 setTimeout(window.location.href="/home/index", 3000);
+          			   }else{
+          				   Lobibox.notify("error", {
+          						size: 'mini',
+          		        		/* height:'300px', */
+          		        		position: 'center top',
+          		        		/* title: '登陆提示', */
+          		        		msg: data.message
+          		        	});
+          			   }
+          		   }
+          		});
+			});
 		</script>
 </body>
 </html>

@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.hotel.mapper.OrgMapper">
+	<cache type="org.mybatis.caches.ehcache.LoggingEhcache"> 
+    <property name="timeToIdleSeconds" value="3600" /><!--1 hour-->
+    <property name="timeToLiveSeconds" value="3600" /><!--1 hour-->
+    <property name="maxEntriesLocalHeap" value="1000" />
+    <property name="maxEntriesLocalDisk" value="10000000" />
+    <property name="memoryStoreEvictionPolicy" value="LRU" />
+ 	</cache>
+  <resultMap id="BaseResultMap" type="org.hotel.model.Org">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="org_id" jdbcType="VARCHAR" property="orgId" />
+    <result column="parent_id" jdbcType="VARCHAR" property="parentId" />
+    <result column="org_flag" jdbcType="VARCHAR" property="orgFlag" />
+    <result column="org_name" jdbcType="VARCHAR" property="orgName" />
+    <result column="org_desc" jdbcType="VARCHAR" property="orgDesc" />
+    <result column="org_no" jdbcType="VARCHAR" property="orgNo" />
+    <result column="role_desc" jdbcType="VARCHAR" property="roleDesc" />
+    <result column="real_name" jdbcType="VARCHAR" property="realName" />
+    <result column="telphone" jdbcType="VARCHAR" property="telphone" />
+    <result column="fixed_telephone" jdbcType="VARCHAR" property="fixedTelephone" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modify_user" jdbcType="VARCHAR" property="modifyUser" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+    <result column="del_flag" jdbcType="TINYINT" property="delFlag" />
+    <result column="parent_name" jdbcType="VARCHAR" property="parentName" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, org_id, parent_id, org_flag, org_name, org_desc, org_no, role_desc, real_name, 
+    telphone, fixed_telephone, email, create_user, create_time, modify_user, modify_time, 
+    del_flag, parent_name
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from org
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from org
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="org.hotel.model.Org">
+    insert into org (id, org_id, parent_id, 
+      org_flag, org_name, org_desc, 
+      org_no, role_desc, real_name, 
+      telphone, fixed_telephone, email, 
+      create_user, create_time, modify_user, 
+      modify_time, del_flag, parent_name
+      )
+    values (#{id,jdbcType=VARCHAR}, #{orgId,jdbcType=VARCHAR}, #{parentId,jdbcType=VARCHAR}, 
+      #{orgFlag,jdbcType=VARCHAR}, #{orgName,jdbcType=VARCHAR}, #{orgDesc,jdbcType=VARCHAR}, 
+      #{orgNo,jdbcType=VARCHAR}, #{roleDesc,jdbcType=VARCHAR}, #{realName,jdbcType=VARCHAR}, 
+      #{telphone,jdbcType=VARCHAR}, #{fixedTelephone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
+      #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{modifyUser,jdbcType=VARCHAR}, 
+      #{modifyTime,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=TINYINT}, #{parentName,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="org.hotel.model.Org">
+    insert into org
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="orgId != null">
+        org_id,
+      </if>
+      <if test="parentId != null">
+        parent_id,
+      </if>
+      <if test="orgFlag != null">
+        org_flag,
+      </if>
+      <if test="orgName != null">
+        org_name,
+      </if>
+      <if test="orgDesc != null">
+        org_desc,
+      </if>
+      <if test="orgNo != null">
+        org_no,
+      </if>
+      <if test="roleDesc != null">
+        role_desc,
+      </if>
+      <if test="realName != null">
+        real_name,
+      </if>
+      <if test="telphone != null">
+        telphone,
+      </if>
+      <if test="fixedTelephone != null">
+        fixed_telephone,
+      </if>
+      <if test="email != null">
+        email,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="modifyUser != null">
+        modify_user,
+      </if>
+      <if test="modifyTime != null">
+        modify_time,
+      </if>
+      <if test="delFlag != null">
+        del_flag,
+      </if>
+      <if test="parentName != null">
+        parent_name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="orgId != null">
+        #{orgId,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null">
+        #{parentId,jdbcType=VARCHAR},
+      </if>
+      <if test="orgFlag != null">
+        #{orgFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="orgName != null">
+        #{orgName,jdbcType=VARCHAR},
+      </if>
+      <if test="orgDesc != null">
+        #{orgDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="orgNo != null">
+        #{orgNo,jdbcType=VARCHAR},
+      </if>
+      <if test="roleDesc != null">
+        #{roleDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="realName != null">
+        #{realName,jdbcType=VARCHAR},
+      </if>
+      <if test="telphone != null">
+        #{telphone,jdbcType=VARCHAR},
+      </if>
+      <if test="fixedTelephone != null">
+        #{fixedTelephone,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyUser != null">
+        #{modifyUser,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null">
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        #{delFlag,jdbcType=TINYINT},
+      </if>
+      <if test="parentName != null">
+        #{parentName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.hotel.model.Org">
+    update org
+    <set>
+      <if test="orgId != null">
+        org_id = #{orgId,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null">
+        parent_id = #{parentId,jdbcType=VARCHAR},
+      </if>
+      <if test="orgFlag != null">
+        org_flag = #{orgFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="orgName != null">
+        org_name = #{orgName,jdbcType=VARCHAR},
+      </if>
+      <if test="orgDesc != null">
+        org_desc = #{orgDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="orgNo != null">
+        org_no = #{orgNo,jdbcType=VARCHAR},
+      </if>
+      <if test="roleDesc != null">
+        role_desc = #{roleDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="realName != null">
+        real_name = #{realName,jdbcType=VARCHAR},
+      </if>
+      <if test="telphone != null">
+        telphone = #{telphone,jdbcType=VARCHAR},
+      </if>
+      <if test="fixedTelephone != null">
+        fixed_telephone = #{fixedTelephone,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyUser != null">
+        modify_user = #{modifyUser,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null">
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        del_flag = #{delFlag,jdbcType=TINYINT},
+      </if>
+      <if test="parentName != null">
+        parent_name = #{parentName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.hotel.model.Org">
+    update org
+    set org_id = #{orgId,jdbcType=VARCHAR},
+      parent_id = #{parentId,jdbcType=VARCHAR},
+      org_flag = #{orgFlag,jdbcType=VARCHAR},
+      org_name = #{orgName,jdbcType=VARCHAR},
+      org_desc = #{orgDesc,jdbcType=VARCHAR},
+      org_no = #{orgNo,jdbcType=VARCHAR},
+      role_desc = #{roleDesc,jdbcType=VARCHAR},
+      real_name = #{realName,jdbcType=VARCHAR},
+      telphone = #{telphone,jdbcType=VARCHAR},
+      fixed_telephone = #{fixedTelephone,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      create_user = #{createUser,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_user = #{modifyUser,jdbcType=VARCHAR},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      del_flag = #{delFlag,jdbcType=TINYINT},
+      parent_name = #{parentName,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+	
+  <select id="findAll" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from org
+    where del_flag=0
+  </select>
+  
+  <select id="findOrgsByParentId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from org
+    where del_flag=0 and parent_id=#{parentId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="findOrgsByIds" parameterType="java.util.List" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from org
+    where del_flag=0
+    <if test="null !=orgs and orgs.size>0">
+    	and parent_id in 
+	    <foreach close=")" collection="orgs" index="" item="item" open="(" separator=",">  
+	     	 #{item.id, jdbcType=VARCHAR}  
+	    </foreach> 
+    </if>
+  </select>
+  
+</mapper>

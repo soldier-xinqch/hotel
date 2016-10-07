@@ -1,5 +1,5 @@
-<%@page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/common/include/include.jsp"%>
 <!-- sidebar  BEGIN -->
 <a class="menu-toggler" id="menu-toggler" href="#">
 	<span class="menu-text"></span>
@@ -40,13 +40,60 @@
 	<!-- #sidebar-shortcuts -->
 
 	<ul class="nav nav-list">
-		<li class="active">
-			<a href="index.html"> <i class="fa fa-home"></i> <span class="menu-text"> 控制台 </span>
+		<li class="${activeFlag =='homeindex'?'active':''}">
+			<a href="/home/index"> <i class="fa fa-home"></i> <span class="menu-text"> 控制台${activeFlag} </span>
 			</a>
 		</li>
-
+		<c:if test="${null != menus}">
+			<c:forEach items="${menus}" var="appMenu">
+			     <li class="${appMenu.menuFlag ==menuFlag ?'active':'' }">
+						<a href="${appMenu.menuUrl}" >${appMenu.menuName }
+							<i class="${appMenu.menuIcon }"></i>
+							<span class="menu-text">${appMenu.menuName }</span>
+							<c:if test="${appMenu.menuCode == menuCode}">
+								<span class="selected"></span>
+							</c:if>
+							<c:if test="${appMenu.menuStatus == '3'}">
+								<span class="badge badge-success">即将上线</span>
+							</c:if>
+							<c:if test="${appMenu.menuStatus == '1'}"><!-- new  -->
+								<span class="badge badge-danger">new</span>
+							</c:if>
+							${appMenu.menu}12312312321321321
+							<c:if test="${null !=appMenu.menu}"><!-- Next  -->
+								<b class="arrow icon-angle-down"></b>
+							</c:if>
+						</a>
+				 </li>
+				<c:if test="${null !=appMenu.menu}">
+					<ul class="submenu">
+						<c:forEach items="${appMenu.menu}" var="sonMenu">
+							<li>
+								<a href="${sonMenu.menuUrl}">
+									<i class="${sonMenu.menuIcon }"></i>
+									${sonMenu.menuName }
+								</a>
+							</li>
+							<c:if test="${sonMenu.menuStatus == '2'}">
+							<ul class="submenu">
+								<c:forEach items="${sonMenu.menu}" var="thirdMenu">
+									<li>
+										<a href="${thirdMenu.menuUrl}">
+											<i class="${thirdMenu.menuIcon }"></i>
+											${thirdMenu.menuName }
+										</a>
+									</li>
+								</c:forEach>
+							</ul>
+				</c:if>
+						</c:forEach>
+					</ul>
+				</c:if>
+			</c:forEach>
+		</c:if>
+	
 		<li>
-			<a href="typography.html"> <i class="icon-text-width"></i>
+			<a href="/company/index"> <i class="icon-text-width"></i>
 					<span class="menu-text"> 企业管理 </span>
 			</a>
 		</li>
@@ -61,7 +108,7 @@
 						class="icon-double-angle-right"></i> 部门管理
 				</a></li>
 
-				<li><a href="buttons.html"> <i
+				<li><a href="/staff/index"> <i
 						class="icon-double-angle-right"></i> 员工管理
 				</a></li>
 
@@ -88,7 +135,7 @@
 				<li><a href="jqgrid.html"> <i
 						class="icon-double-angle-right"></i>综合查询
 				</a></li>
-				<li><a href="jqgrid.html"> <i
+				<li><a href="/arrangeTime/index"> <i
 						class="icon-double-angle-right"></i>排班管理
 				</a></li>
 				<li><a href="jqgrid.html"> <i
@@ -165,6 +212,9 @@
 				class="arrow icon-angle-down"></b>
 		</a>
 			<ul class="submenu">
+				<li><a href="/menu/indexPage"> <i
+						class="icon-double-angle-right"></i> 菜单设置
+				</a></li>
 				<li><a href="profile.html"> <i
 						class="icon-double-angle-right"></i> 资源分类
 				</a></li>

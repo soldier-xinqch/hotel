@@ -31,5 +31,5 @@
 	<!-- 导入mvc 配置文件 -->
 	<import resource="spring-web.xml"/>
 	<!-- 安全组件 security  -->
-	<!-- <import resource="spring-shiro.xml"/>  -->
+	<import resource="spring-shiro.xml"/>
 </beans>

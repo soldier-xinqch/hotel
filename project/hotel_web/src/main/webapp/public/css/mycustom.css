@@ -11,3 +11,18 @@
 [class^="icon-"], [class*=" icon-"] {
 	font-size: 16px;
 }
+div.pq-grid-footer.pq-pager{
+	text-align: center;
+}
+div.ui-icon pq-icon ui-icon ui-icon-triangle-1-s{
+	margin-top:0.5em;
+}
+.selectStaff tr td{
+	border:4px solid white;
+}
+.dialog-model{
+	display: none;
+}
+.pq-ui-button.ui-widget-header{
+	padding: 0 10px;
+}

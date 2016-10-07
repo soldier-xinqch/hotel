@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.hotel.mapper.AttendanceExceptionalMapper">
+  <resultMap id="BaseResultMap" type="org.hotel.model.AttendanceExceptional">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="staff_id" jdbcType="VARCHAR" property="staffId" />
+    <result column="staff_name" jdbcType="VARCHAR" property="staffName" />
+    <result column="org_id" jdbcType="VARCHAR" property="orgId" />
+    <result column="org_name" jdbcType="VARCHAR" property="orgName" />
+    <result column="work_order_id" jdbcType="VARCHAR" property="workOrderId" />
+    <result column="work_order_name" jdbcType="VARCHAR" property="workOrderName" />
+    <result column="work_order_type_id" jdbcType="VARCHAR" property="workOrderTypeId" />
+    <result column="work_order_type_name" jdbcType="VARCHAR" property="workOrderTypeName" />
+    <result column="attendance_time" jdbcType="TIMESTAMP" property="attendanceTime" />
+    <result column="attendance_type" jdbcType="VARCHAR" property="attendanceType" />
+    <result column="exception_type" jdbcType="VARCHAR" property="exceptionType" />
+    <result column="brush1" jdbcType="VARCHAR" property="brush1" />
+    <result column="brush2" jdbcType="VARCHAR" property="brush2" />
+    <result column="brush3" jdbcType="VARCHAR" property="brush3" />
+    <result column="brush4" jdbcType="VARCHAR" property="brush4" />
+    <result column="brush5" jdbcType="VARCHAR" property="brush5" />
+    <result column="brush6" jdbcType="VARCHAR" property="brush6" />
+    <result column="brush7" jdbcType="VARCHAR" property="brush7" />
+    <result column="brush8" jdbcType="VARCHAR" property="brush8" />
+    <result column="brush9" jdbcType="VARCHAR" property="brush9" />
+    <result column="brush10" jdbcType="VARCHAR" property="brush10" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+    <result column="create_name" jdbcType="VARCHAR" property="createName" />
+    <result column="modify_user" jdbcType="VARCHAR" property="modifyUser" />
+    <result column="modify_name" jdbcType="VARCHAR" property="modifyName" />
+    <result column="del_flag" jdbcType="VARCHAR" property="delFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, staff_id, staff_name, org_id, org_name, work_order_id, work_order_name, work_order_type_id, 
+    work_order_type_name, attendance_time, attendance_type, exception_type, brush1, brush2, 
+    brush3, brush4, brush5, brush6, brush7, brush8, brush9, brush10, create_user, create_name, 
+    modify_user, modify_name, del_flag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from attendance_exceptional
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from attendance_exceptional
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="org.hotel.model.AttendanceExceptional">
+    insert into attendance_exceptional (id, staff_id, staff_name, 
+      org_id, org_name, work_order_id, 
+      work_order_name, work_order_type_id, work_order_type_name, 
+      attendance_time, attendance_type, exception_type, 
+      brush1, brush2, brush3, 
+      brush4, brush5, brush6, 
+      brush7, brush8, brush9, 
+      brush10, create_user, create_name, 
+      modify_user, modify_name, del_flag
+      )
+    values (#{id,jdbcType=VARCHAR}, #{staffId,jdbcType=VARCHAR}, #{staffName,jdbcType=VARCHAR}, 
+      #{orgId,jdbcType=VARCHAR}, #{orgName,jdbcType=VARCHAR}, #{workOrderId,jdbcType=VARCHAR}, 
+      #{workOrderName,jdbcType=VARCHAR}, #{workOrderTypeId,jdbcType=VARCHAR}, #{workOrderTypeName,jdbcType=VARCHAR}, 
+      #{attendanceTime,jdbcType=TIMESTAMP}, #{attendanceType,jdbcType=VARCHAR}, #{exceptionType,jdbcType=VARCHAR}, 
+      #{brush1,jdbcType=VARCHAR}, #{brush2,jdbcType=VARCHAR}, #{brush3,jdbcType=VARCHAR}, 
+      #{brush4,jdbcType=VARCHAR}, #{brush5,jdbcType=VARCHAR}, #{brush6,jdbcType=VARCHAR}, 
+      #{brush7,jdbcType=VARCHAR}, #{brush8,jdbcType=VARCHAR}, #{brush9,jdbcType=VARCHAR}, 
+      #{brush10,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, #{createName,jdbcType=VARCHAR}, 
+      #{modifyUser,jdbcType=VARCHAR}, #{modifyName,jdbcType=VARCHAR}, #{delFlag,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="org.hotel.model.AttendanceExceptional">
+    insert into attendance_exceptional
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="staffId != null">
+        staff_id,
+      </if>
+      <if test="staffName != null">
+        staff_name,
+      </if>
+      <if test="orgId != null">
+        org_id,
+      </if>
+      <if test="orgName != null">
+        org_name,
+      </if>
+      <if test="workOrderId != null">
+        work_order_id,
+      </if>
+      <if test="workOrderName != null">
+        work_order_name,
+      </if>
+      <if test="workOrderTypeId != null">
+        work_order_type_id,
+      </if>
+      <if test="workOrderTypeName != null">
+        work_order_type_name,
+      </if>
+      <if test="attendanceTime != null">
+        attendance_time,
+      </if>
+      <if test="attendanceType != null">
+        attendance_type,
+      </if>
+      <if test="exceptionType != null">
+        exception_type,
+      </if>
+      <if test="brush1 != null">
+        brush1,
+      </if>
+      <if test="brush2 != null">
+        brush2,
+      </if>
+      <if test="brush3 != null">
+        brush3,
+      </if>
+      <if test="brush4 != null">
+        brush4,
+      </if>
+      <if test="brush5 != null">
+        brush5,
+      </if>
+      <if test="brush6 != null">
+        brush6,
+      </if>
+      <if test="brush7 != null">
+        brush7,
+      </if>
+      <if test="brush8 != null">
+        brush8,
+      </if>
+      <if test="brush9 != null">
+        brush9,
+      </if>
+      <if test="brush10 != null">
+        brush10,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="createName != null">
+        create_name,
+      </if>
+      <if test="modifyUser != null">
+        modify_user,
+      </if>
+      <if test="modifyName != null">
+        modify_name,
+      </if>
+      <if test="delFlag != null">
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="staffId != null">
+        #{staffId,jdbcType=VARCHAR},
+      </if>
+      <if test="staffName != null">
+        #{staffName,jdbcType=VARCHAR},
+      </if>
+      <if test="orgId != null">
+        #{orgId,jdbcType=VARCHAR},
+      </if>
+      <if test="orgName != null">
+        #{orgName,jdbcType=VARCHAR},
+      </if>
+      <if test="workOrderId != null">
+        #{workOrderId,jdbcType=VARCHAR},
+      </if>
+      <if test="workOrderName != null">
+        #{workOrderName,jdbcType=VARCHAR},
+      </if>
+      <if test="workOrderTypeId != null">
+        #{workOrderTypeId,jdbcType=VARCHAR},
+      </if>
+      <if test="workOrderTypeName != null">
+        #{workOrderTypeName,jdbcType=VARCHAR},
+      </if>
+      <if test="attendanceTime != null">
+        #{attendanceTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="attendanceType != null">
+        #{attendanceType,jdbcType=VARCHAR},
+      </if>
+      <if test="exceptionType != null">
+        #{exceptionType,jdbcType=VARCHAR},
+      </if>
+      <if test="brush1 != null">
+        #{brush1,jdbcType=VARCHAR},
+      </if>
+      <if test="brush2 != null">
+        #{brush2,jdbcType=VARCHAR},
+      </if>
+      <if test="brush3 != null">
+        #{brush3,jdbcType=VARCHAR},
+      </if>
+      <if test="brush4 != null">
+        #{brush4,jdbcType=VARCHAR},
+      </if>
+      <if test="brush5 != null">
+        #{brush5,jdbcType=VARCHAR},
+      </if>
+      <if test="brush6 != null">
+        #{brush6,jdbcType=VARCHAR},
+      </if>
+      <if test="brush7 != null">
+        #{brush7,jdbcType=VARCHAR},
+      </if>
+      <if test="brush8 != null">
+        #{brush8,jdbcType=VARCHAR},
+      </if>
+      <if test="brush9 != null">
+        #{brush9,jdbcType=VARCHAR},
+      </if>
+      <if test="brush10 != null">
+        #{brush10,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createName != null">
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyUser != null">
+        #{modifyUser,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyName != null">
+        #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="delFlag != null">
+        #{delFlag,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.hotel.model.AttendanceExceptional">
+    update attendance_exceptional
+    <set>
+      <if test="staffId != null">
+        staff_id = #{staffId,jdbcType=VARCHAR},
+      </if>
+      <if test="staffName != null">
+        staff_name = #{staffName,jdbcType=VARCHAR},
+      </if>
+      <if test="orgId != null">
+        org_id = #{orgId,jdbcType=VARCHAR},
+      </if>
+      <if test="orgName != null">
+        org_name = #{orgName,jdbcType=VARCHAR},
+      </if>
+      <if test="workOrderId != null">
+        work_order_id = #{workOrderId,jdbcType=VARCHAR},
+      </if>
+      <if test="workOrderName != null">
+        work_order_name = #{workOrderName,jdbcType=VARCHAR},
+      </if>
+      <if test="workOrderTypeId != null">
+        work_order_type_id = #{workOrderTypeId,jdbcType=VARCHAR},
+      </if>
+      <if test="workOrderTypeName != null">
+        work_order_type_name = #{workOrderTypeName,jdbcType=VARCHAR},
+      </if>
+      <if test="attendanceTime != null">
+        attendance_time = #{attendanceTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="attendanceType != null">
+        attendance_type = #{attendanceType,jdbcType=VARCHAR},
+      </if>
+      <if test="exceptionType != null">
+        exception_type = #{exceptionType,jdbcType=VARCHAR},
+      </if>
+      <if test="brush1 != null">
+        brush1 = #{brush1,jdbcType=VARCHAR},
+      </if>
+      <if test="brush2 != null">
+        brush2 = #{brush2,jdbcType=VARCHAR},
+      </if>
+      <if test="brush3 != null">
+        brush3 = #{brush3,jdbcType=VARCHAR},
+      </if>
+      <if test="brush4 != null">
+        brush4 = #{brush4,jdbcType=VARCHAR},
+      </if>
+      <if test="brush5 != null">
+        brush5 = #{brush5,jdbcType=VARCHAR},
+      </if>
+      <if test="brush6 != null">
+        brush6 = #{brush6,jdbcType=VARCHAR},
+      </if>
+      <if test="brush7 != null">
+        brush7 = #{brush7,jdbcType=VARCHAR},
+      </if>
+      <if test="brush8 != null">
+        brush8 = #{brush8,jdbcType=VARCHAR},
+      </if>
+      <if test="brush9 != null">
+        brush9 = #{brush9,jdbcType=VARCHAR},
+      </if>
+      <if test="brush10 != null">
+        brush10 = #{brush10,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createName != null">
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyUser != null">
+        modify_user = #{modifyUser,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyName != null">
+        modify_name = #{modifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="delFlag != null">
+        del_flag = #{delFlag,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.hotel.model.AttendanceExceptional">
+    update attendance_exceptional
+    set staff_id = #{staffId,jdbcType=VARCHAR},
+      staff_name = #{staffName,jdbcType=VARCHAR},
+      org_id = #{orgId,jdbcType=VARCHAR},
+      org_name = #{orgName,jdbcType=VARCHAR},
+      work_order_id = #{workOrderId,jdbcType=VARCHAR},
+      work_order_name = #{workOrderName,jdbcType=VARCHAR},
+      work_order_type_id = #{workOrderTypeId,jdbcType=VARCHAR},
+      work_order_type_name = #{workOrderTypeName,jdbcType=VARCHAR},
+      attendance_time = #{attendanceTime,jdbcType=TIMESTAMP},
+      attendance_type = #{attendanceType,jdbcType=VARCHAR},
+      exception_type = #{exceptionType,jdbcType=VARCHAR},
+      brush1 = #{brush1,jdbcType=VARCHAR},
+      brush2 = #{brush2,jdbcType=VARCHAR},
+      brush3 = #{brush3,jdbcType=VARCHAR},
+      brush4 = #{brush4,jdbcType=VARCHAR},
+      brush5 = #{brush5,jdbcType=VARCHAR},
+      brush6 = #{brush6,jdbcType=VARCHAR},
+      brush7 = #{brush7,jdbcType=VARCHAR},
+      brush8 = #{brush8,jdbcType=VARCHAR},
+      brush9 = #{brush9,jdbcType=VARCHAR},
+      brush10 = #{brush10,jdbcType=VARCHAR},
+      create_user = #{createUser,jdbcType=VARCHAR},
+      create_name = #{createName,jdbcType=VARCHAR},
+      modify_user = #{modifyUser,jdbcType=VARCHAR},
+      modify_name = #{modifyName,jdbcType=VARCHAR},
+      del_flag = #{delFlag,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+   <select id="findAll" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from attendance_exceptional
+    where del_flag=0
+  </select>
+  <select id="findAttendanceExceptionalByOrgs" parameterType="java.util.List" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from attendance_exceptional
+    where del_flag=0
+    and org_id in 
+    <foreach close=")" collection="orgs" index="" item="item" open="(" separator=",">  
+     	 #{item.id, jdbcType=VARCHAR}  
+    </foreach> 
+  </select>
+</mapper>

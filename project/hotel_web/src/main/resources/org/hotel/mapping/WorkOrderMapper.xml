@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.hotel.mapper.WorkOrderMapper">
+  <resultMap id="BaseResultMap" type="org.hotel.model.WorkOrder">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="order_no" jdbcType="VARCHAR" property="orderNo" />
+    <result column="begin_work" jdbcType="VARCHAR" property="beginWork" />
+    <result column="end_work" jdbcType="VARCHAR" property="endWork" />
+    <result column="begin_elastic_time" jdbcType="INTEGER" property="beginElasticTime" />
+    <result column="end_elastic_time" jdbcType="INTEGER" property="endElasticTime" />
+    <result column="work_time" jdbcType="INTEGER" property="workTime" />
+    <result column="work_type" jdbcType="VARCHAR" property="workType" />
+    <result column="work_type_name" jdbcType="VARCHAR" property="workTypeName" />
+    <result column="Breakfast" jdbcType="TINYINT" property="breakfast" />
+    <result column="lunch" jdbcType="TINYINT" property="lunch" />
+    <result column="dinner" jdbcType="TINYINT" property="dinner" />
+    <result column="night_eating" jdbcType="TINYINT" property="nightEating" />
+    <result column="tomorrow_eat_num" jdbcType="INTEGER" property="tomorrowEatNum" />
+    <result column="work_desc" jdbcType="VARCHAR" property="workDesc" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modify_user" jdbcType="VARCHAR" property="modifyUser" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+    <result column="del_flag" jdbcType="TINYINT" property="delFlag" />
+    <result column="org_id" jdbcType="VARCHAR" property="orgId" />
+    <result column="org_name" jdbcType="VARCHAR" property="orgName" />
+    <result column="on_start" jdbcType="VARCHAR" property="onStart" />
+    <result column="on_end" jdbcType="VARCHAR" property="onEnd" />
+    <result column="off_start" jdbcType="VARCHAR" property="offStart" />
+    <result column="off_end" jdbcType="VARCHAR" property="offEnd" />
+    <result column="off_other_time" jdbcType="VARCHAR" property="offOtherTime" />
+    <result column="on_other_time" jdbcType="VARCHAR" property="onOtherTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, order_no, begin_work, end_work, begin_elastic_time, end_elastic_time, work_time, 
+    work_type, work_type_name, Breakfast, lunch, dinner, night_eating, tomorrow_eat_num, 
+    work_desc, create_user, create_time, modify_user, modify_time, del_flag, org_id, 
+    org_name, on_start, on_end, off_start, off_end, off_other_time, on_other_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from work_order
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from work_order
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insertSelective" parameterType="org.hotel.model.WorkOrder">
+    insert into work_order
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="orderNo != null">
+        order_no,
+      </if>
+      <if test="beginWork != null">
+        begin_work,
+      </if>
+      <if test="endWork != null">
+        end_work,
+      </if>
+      <if test="beginElasticTime != null">
+        begin_elastic_time,
+      </if>
+      <if test="endElasticTime != null">
+        end_elastic_time,
+      </if>
+      <if test="workTime != null">
+        work_time,
+      </if>
+      <if test="workType != null">
+        work_type,
+      </if>
+      <if test="workTypeName != null">
+        work_type_name,
+      </if>
+      <if test="breakfast != null">
+        Breakfast,
+      </if>
+      <if test="lunch != null">
+        lunch,
+      </if>
+      <if test="dinner != null">
+        dinner,
+      </if>
+      <if test="nightEating != null">
+        night_eating,
+      </if>
+      <if test="tomorrowEatNum != null">
+        tomorrow_eat_num,
+      </if>
+      <if test="workDesc != null">
+        work_desc,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="modifyUser != null">
+        modify_user,
+      </if>
+      <if test="modifyTime != null">
+        modify_time,
+      </if>
+      <if test="delFlag != null">
+        del_flag,
+      </if>
+      <if test="orgId != null">
+        org_id,
+      </if>
+      <if test="orgName != null">
+        org_name,
+      </if>
+      <if test="onStart != null">
+        on_start,
+      </if>
+      <if test="onEnd != null">
+        on_end,
+      </if>
+      <if test="offStart != null">
+        off_start,
+      </if>
+      <if test="offEnd != null">
+        off_end,
+      </if>
+      <if test="offOtherTime != null">
+        off_other_time,
+      </if>
+      <if test="onOtherTime != null">
+        on_other_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="orderNo != null">
+        #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="beginWork != null">
+        #{beginWork,jdbcType=VARCHAR},
+      </if>
+      <if test="endWork != null">
+        #{endWork,jdbcType=VARCHAR},
+      </if>
+      <if test="beginElasticTime != null">
+        #{beginElasticTime,jdbcType=INTEGER},
+      </if>
+      <if test="endElasticTime != null">
+        #{endElasticTime,jdbcType=INTEGER},
+      </if>
+      <if test="workTime != null">
+        #{workTime,jdbcType=INTEGER},
+      </if>
+      <if test="workType != null">
+        #{workType,jdbcType=VARCHAR},
+      </if>
+      <if test="workTypeName != null">
+        #{workTypeName,jdbcType=VARCHAR},
+      </if>
+      <if test="breakfast != null">
+        #{breakfast,jdbcType=TINYINT},
+      </if>
+      <if test="lunch != null">
+        #{lunch,jdbcType=TINYINT},
+      </if>
+      <if test="dinner != null">
+        #{dinner,jdbcType=TINYINT},
+      </if>
+      <if test="nightEating != null">
+        #{nightEating,jdbcType=TINYINT},
+      </if>
+      <if test="tomorrowEatNum != null">
+        #{tomorrowEatNum,jdbcType=INTEGER},
+      </if>
+      <if test="workDesc != null">
+        #{workDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyUser != null">
+        #{modifyUser,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null">
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        #{delFlag,jdbcType=TINYINT},
+      </if>
+      <if test="orgId != null">
+        #{orgId,jdbcType=VARCHAR},
+      </if>
+      <if test="orgName != null">
+        #{orgName,jdbcType=VARCHAR},
+      </if>
+      <if test="onStart != null">
+        #{onStart,jdbcType=VARCHAR},
+      </if>
+      <if test="onEnd != null">
+        #{onEnd,jdbcType=VARCHAR},
+      </if>
+      <if test="offStart != null">
+        #{offStart,jdbcType=VARCHAR},
+      </if>
+      <if test="offEnd != null">
+        #{offEnd,jdbcType=VARCHAR},
+      </if>
+      <if test="offOtherTime != null">
+        #{offOtherTime,jdbcType=VARCHAR},
+      </if>
+      <if test="onOtherTime != null">
+        #{onOtherTime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.hotel.model.WorkOrder">
+    update work_order
+    <set>
+      <if test="orderNo != null">
+        order_no = #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="beginWork != null">
+        begin_work = #{beginWork,jdbcType=VARCHAR},
+      </if>
+      <if test="endWork != null">
+        end_work = #{endWork,jdbcType=VARCHAR},
+      </if>
+      <if test="beginElasticTime != null">
+        begin_elastic_time = #{beginElasticTime,jdbcType=INTEGER},
+      </if>
+      <if test="endElasticTime != null">
+        end_elastic_time = #{endElasticTime,jdbcType=INTEGER},
+      </if>
+      <if test="workTime != null">
+        work_time = #{workTime,jdbcType=INTEGER},
+      </if>
+      <if test="workType != null">
+        work_type = #{workType,jdbcType=VARCHAR},
+      </if>
+      <if test="workTypeName != null">
+        work_type_name = #{workTypeName,jdbcType=VARCHAR},
+      </if>
+      <if test="breakfast != null">
+        Breakfast = #{breakfast,jdbcType=TINYINT},
+      </if>
+      <if test="lunch != null">
+        lunch = #{lunch,jdbcType=TINYINT},
+      </if>
+      <if test="dinner != null">
+        dinner = #{dinner,jdbcType=TINYINT},
+      </if>
+      <if test="nightEating != null">
+        night_eating = #{nightEating,jdbcType=TINYINT},
+      </if>
+      <if test="tomorrowEatNum != null">
+        tomorrow_eat_num = #{tomorrowEatNum,jdbcType=INTEGER},
+      </if>
+      <if test="workDesc != null">
+        work_desc = #{workDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyUser != null">
+        modify_user = #{modifyUser,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null">
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        del_flag = #{delFlag,jdbcType=TINYINT},
+      </if>
+      <if test="orgId != null">
+        org_id = #{orgId,jdbcType=VARCHAR},
+      </if>
+      <if test="orgName != null">
+        org_name = #{orgName,jdbcType=VARCHAR},
+      </if>
+      <if test="onStart != null">
+        on_start = #{onStart,jdbcType=VARCHAR},
+      </if>
+      <if test="onEnd != null">
+        on_end = #{onEnd,jdbcType=VARCHAR},
+      </if>
+      <if test="offStart != null">
+        off_start = #{offStart,jdbcType=VARCHAR},
+      </if>
+      <if test="offEnd != null">
+        off_end = #{offEnd,jdbcType=VARCHAR},
+      </if>
+      <if test="offOtherTime != null">
+        off_other_time = #{offOtherTime,jdbcType=VARCHAR},
+      </if>
+      <if test="onOtherTime != null">
+        on_other_time = #{onOtherTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  
+  <select id="findAll" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from work_order
+    where del_flag=0
+  </select>
+  
+  <select id="findworkOrderByOrgId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from work_order
+    where del_flag=0 and  org_id = #{OrgId,jdbcType=VARCHAR}     
+  </select>
+  <select id="findWorkOrdersByOrgs" parameterType="java.util.List" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from work_order
+    where del_flag=0
+    and org_id in 
+    <foreach close=")" collection="orgs" index="" item="item" open="(" separator=",">  
+     	 #{item.id, jdbcType=VARCHAR}  
+    </foreach> 
+  </select>
+  
+  
+</mapper>

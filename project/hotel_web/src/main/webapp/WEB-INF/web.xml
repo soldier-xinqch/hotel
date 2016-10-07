@@ -63,8 +63,42 @@
 		<filter-name>CharacterEncodingFilter</filter-name>
 		<url-pattern>/</url-pattern>
 	</filter-mapping>
+	<!-- shiro过滤器 -->
+	<filter>  
+	    <filter-name>shiroFilter</filter-name>  
+	    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>  
+	    <init-param>  
+	        <param-name>targetFilterLifecycle</param-name>  
+	        <param-value>true</param-value>  
+	    </init-param>  
+	</filter>  
+	<filter-mapping>  
+	    <filter-name>shiroFilter</filter-name>  
+	    <url-pattern>/*</url-pattern>  
+	</filter-mapping> 
+	<!-- 连接池 启用Web监控统计功能   start-->
+	<filter>
+		<filter-name>DruidWebStatFilter</filter-name>
+		<filter-class>com.alibaba.druid.support.http.WebStatFilter</filter-class>
+		<init-param>
+			<param-name>exclusions</param-name>
+			<param-value>*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>DruidWebStatFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
 	<session-config>
 		<session-timeout>60</session-timeout>
 	</session-config>
+	<!-- 标签库配置  -->
+	<jsp-config>
+        <taglib>
+            <taglib-uri>/auth-tags</taglib-uri>
+            <taglib-location>classpath:config/tags/role-tag.tld</taglib-location>
+        </taglib>
+    </jsp-config>
 	
 </web-app>
