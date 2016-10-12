@@ -30,13 +30,13 @@
 				<ul
 					class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
 					<!-- <li><a href="#"> <i class="icon-cog"></i> Settings
-					</a></li>
-
-					<li><a href="#"> <i class="icon-user"></i> Profile
+							</a></li>
+					-->
+					<li><a href="#"> <i class="icon-user"></i> 个人设置
 					</a></li> 
 
 					<li class="divider"></li>
-					-->
+				
 					<li><a href="#" id="logout"> <i class="icon-off"></i> Logout
 					</a></li>
 				</ul>

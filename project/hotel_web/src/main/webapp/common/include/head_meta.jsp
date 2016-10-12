@@ -43,7 +43,9 @@
 <!--
 <link rel="stylesheet" href="/plugins/bootstrap-treeview/bootstrap-treeview.min.css" >
   -->
-
+<script type="text/javascript">
+	var CTX_PATH = '<%=request.getContextPath()%>';  
+</script>
 
 
 <script type="text/javascript" src="../public/js/jquery-1.9.1/jquery.js"></script>
@@ -87,6 +89,7 @@
 <script src="/public/js/typeahead.bundle.js"></script>
 <script src="/public/js/jquery.sparkline.min.js"></script>  -->
 <script type="text/javascript">
+	var CTX_PATH = '<%=request.getContextPath()%>';  
 	$(function() {
 		/* 页面加载进度条  */
 		NProgress.start();

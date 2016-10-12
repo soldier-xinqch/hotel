@@ -1,5 +1,4 @@
-﻿var CTX_PATH='';
-//	'<%=request.getContextPath()%>';
+﻿//var CTX_PATH='<%=request.getContextPath()%>';
     //选择组织机构节点
     function onClick(event, treeId, treeNode, clickFlag){
     	alert(1);

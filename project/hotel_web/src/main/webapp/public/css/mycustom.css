@@ -1,4 +1,15 @@
 /*  自定义样式  */
+.left{
+	float: left;
+}
+.right{
+	float: right;
+}
+
+.list-group-item{
+	margin: 0 2px 0 2px;
+}
+
 .font-indentation{
 	text-indent: 20px;
 }
@@ -30,3 +41,5 @@ div.ui-icon pq-icon ui-icon ui-icon-triangle-1-s{
 .searchDiv{
 	margin: 5px;
 }
+
+

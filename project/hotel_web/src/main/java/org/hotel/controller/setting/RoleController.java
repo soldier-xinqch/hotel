@@ -58,6 +58,38 @@ public class RoleController {
 	private List<Org> orgs;
 	
 	private User user;
+	
+	public List<Menu> getUserMenus(){
+		List<String> menuIds= Lists.newArrayList();
+		try {
+			Cache cache = cacheManager.getCache("userCache");
+			Element element =  cache.get("LoginUserKey");
+			if(null  == element){
+				Subject currentUser = SecurityUtils.getSubject();       
+				currentUser.logout();
+				return null;
+			} 
+			User user = (User) element.getValue();
+			this.user = user;
+			String roles = user.getRoleDesc();
+			String[] roleIds = roles.split(",");
+			for (String string : roleIds) {
+				if(!StringUtils.isEmpty(string)&&""!=string){
+					RoleAuth roleAuth = roleAuthService.findRoleAuthByRoleId(string);
+					if(null!=roleAuth&&null!= roleAuth.getElementId()) {
+						String elements = roleAuth.getElementId();
+						String[] menus = elements.split(",");
+						for (String menuId : menus) {
+							menuIds.add(menuId);
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+		return menuService.findMenuByIds(menuIds);
+	}
 
 
 	@RequestMapping(value="index",method=RequestMethod.GET)
@@ -74,8 +106,8 @@ public class RoleController {
 		this.orgs =orgs; 
 		this.user =user; 
 		request.setAttribute("orgs", orgs);
-		
-		List<Menu> menus = menuService.findMenuByOrgs(orgs);
+		List<Menu> menus = getUserMenus();
+//		List<Menu> menus = menuService.findMenuByOrgs(orgs);
 		request.setAttribute("menuList", menus);
 		request.setAttribute("menuKey", urlStr+"index");
 		return "server/role/role_setting";
