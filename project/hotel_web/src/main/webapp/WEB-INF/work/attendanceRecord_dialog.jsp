@@ -31,7 +31,7 @@
       	 <div class="form-group">
        <label class="col-sm-3 control-label">考勤类型</label>
        <div class="col-sm-9">
-       	<select class="form-control input-xlarge"  name="attendanceTypeId" data-placeholder="请选择员工所属部门">
+       	<select class="form-control input-xlarge"  name="attendanceTypeId" data-placeholder="请选择考勤类型">
        		<option value=""></option>
         		<c:if test="${null != types}">
 					<c:forEach items="${types}" var="type">

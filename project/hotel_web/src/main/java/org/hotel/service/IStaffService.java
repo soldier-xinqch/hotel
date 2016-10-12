@@ -39,4 +39,13 @@ public interface IStaffService extends BaseService<Staff>{
 	 * @return
 	 */
 	Staff findStaffAndMacByNoOrName(String no, String name, String mac);
+	/**
+	 *  根据条件查询员工信息
+	 * @param orgId
+	 * @param startTime
+	 * @param endTime
+	 * @param status
+	 * @return
+	 */
+	List<Staff> findStaffByLikes(List<Org> orgIds, String[] staffId, String startTime, String endTime, String status);
 }

@@ -5,6 +5,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.hotel.common.BaseController;
 import org.hotel.common.CommEnum.RESULTFLAG;
 import org.hotel.common.PageEntity;
@@ -42,6 +44,11 @@ public class DepartmentController extends BaseController<Org>{
 	public String orgIndex(HttpServletRequest request){
 		Cache cache = cacheManager.getCache("userCache");
 		Element element =  cache.get("LoginUserKey");
+		if(null  == element){
+			Subject currentUser = SecurityUtils.getSubject();       
+			currentUser.logout();
+			return null;
+		} 
 		User user = (User) element.getValue();
 		List<Org> orgs = orgService.findOrgListById(user.getOrgId());
 		this.user = user;
@@ -92,4 +99,14 @@ public class DepartmentController extends BaseController<Org>{
 		map.put("type", isSuccess>0 ?RESULTFLAG.SUCCESS.getValue():RESULTFLAG.ERROR.getValue());
 		return map;
 	}
+	
+	
+	@RequestMapping(value="tree",method=RequestMethod.POST)
+	public  @ResponseBody String tree(HttpServletRequest request){
+		String ss = "";
+		return ss;
+	}
+	
+	
+	
 }

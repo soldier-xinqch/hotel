@@ -25,10 +25,10 @@
     	        		{ title: "所属部门",dataIndx:"orgName", width: '11%', dataType: "string", align: "center",
     	        			filter: { type: 'textbox', condition: 'begin', listeners: ['change'] }
     	                },
-    	        		{ title: "考勤日期",dataIndx:"time", width: '11%', dataType: "date", align: "center" },
-    	        		{ title: "异常类型",dataIndx:"time", width: '11%', dataType: "string", align: "center" },
-    	        		{ title: "班次",dataIndx:"time", width: '11%', dataType: "string", align: "center" },
-    	        		{ title: "班次类型",dataIndx:"time", width: '11%', dataType: "string", align: "center" },
+    	        		{ title: "考勤日期",dataIndx:"attendanceTime", width: '11%', dataType: "date", align: "center" },
+    	        		{ title: "异常类型",dataIndx:"exceptionType", width: '11%', dataType: "string", align: "center" },
+    	        		{ title: "班次",dataIndx:"workOrderName", width: '11%', dataType: "string", align: "center" },
+    	        		{ title: "班次类型",dataIndx:"workOrderTypeName", width: '11%', dataType: "string", align: "center" },
     	        		{ title: "刷卡1",dataIndx:"brush1", width: '7%', dataType: "string", align: "center" },
     	        		{ title: "刷卡2",dataIndx:"brush2", width: '7%', dataType: "string", align: "center" },
     	        		{ title: "刷卡3",dataIndx:"brush3", width: '7%', dataType: "string", align: "center" },
@@ -55,7 +55,7 @@
                         label: "导出",
                         cls:'btn btn-sm',
                         listeners: [{"click": function (evt) {
-                        	 window.open("exportWorkType");
+                        	 tab_export();
                             }
                         }]
                     }
@@ -107,5 +107,39 @@
             var val = $(this).val();
             $grid.css('margin', val).pqGrid('refresh');
         });
+        function tab_export() {
+          	var delMsg = '<div class="dialog-cls"><form id="export_from" class="form-horizontal" role="form">'+$("#attendanceExceptional_export_dialog").html()+'</form></div>';
+          	bootbox.dialog({
+          		  message: delMsg,
+          		  title: "导出列表",
+          		  buttons: {
+          		    success: {
+          		      label: "导出",
+          		      className: "btn btn-sm btn-success",
+          		      callback: function() {
+          		    	  window.open("exportExcel?"+$("#export_from").serialize());
+          		      }
+          		    },
+          		    canle:{
+     	            	 label: "取消",
+     	                 className: "btn btn-sm btn-grey",
+     	                 callback: function () {
+     	                 }
+          		    }
+          		  }
+          		});
+          	$('#export_from .row').find(" .form-group div").find("select").pqSelect({ 
+          		selectallText:'全选',
+	    		checkbox: true,
+	    		width:'270px'
+	    	});
+          	$('.datepicker').datetimepicker({
+    			language: 'zh-CN',
+    			format: 'yyyy-mm-dd hh:ii:ss',
+    	        autoclose: true,
+    	        todayBtn: true,
+    	        pickerPosition: "bottom-left"
+            });
+          }
     });    
     

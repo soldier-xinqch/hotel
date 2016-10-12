@@ -93,4 +93,20 @@ public interface CommEnum {
 			return value;
 		}
 	}
+	public enum ATTENDANCEEXCEPTION implements CommEnum{
+		NOCARD("NOCARD"),//未打卡
+		NOORDER("NOORDER"),//未排班
+		LOSECARD("LOSECARD"),//缺卡
+		LATER("LATER"),//迟到
+		EARLYQUIT("EARLYQUIT");//早退
+		private String value;
+		
+		ATTENDANCEEXCEPTION(String value){
+			this.value = value;
+		}
+		
+		public String getValue(){
+			return value;
+		}
+	}
 }

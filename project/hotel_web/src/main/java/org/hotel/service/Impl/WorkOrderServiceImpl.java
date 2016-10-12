@@ -62,5 +62,9 @@ public class WorkOrderServiceImpl implements IWorkOrderService{
 	public List<WorkOrder> findWorkOrdersByOrgs(List<Org> orgs) {
 		return workOrderMapper.findWorkOrdersByOrgs(orgs);
 	}
+	@Override
+	public WorkOrder findOrderById(String orderId) {
+		return workOrderMapper.selectByPrimaryKey(orderId);
+	}
 	
 }

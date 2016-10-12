@@ -17,7 +17,8 @@ var dataModel = {
             method: "GET",
             url: "pageData",
             getData: function (dataJSON) {  
-                return { curPage: dataJSON.pageNo, totalRecords: dataJSON.pageSize,data: dataJSON.list };
+            	var data = dataJSON.list;
+                return { curPage: dataJSON.pageNo, totalRecords: dataJSON.total, data: data };
             }
         };
 var colModel = [
@@ -44,7 +45,7 @@ var colModel = [
 
         			 }
         		},
-        		{ title: "操作", editable: false, minWidth: '12%', sortable: false,align: "center", render: function (ui) {
+        		{ title: "操作", editable: false, minWidth: '12%',width: '260px', sortable: false,align: "center", render: function (ui) {
     	            var rowData=ui.rowData,flag=rowData.delFlag ;
                 return "<button id="+rowData.id+" type='button' class='btn btn-xs btn-success auth_btn'>用户授权</button>\
                     <button id="+rowData.id+" type='button' class='btn btn-xs btn-primary update_passwd' >修改密码</button>";
@@ -227,6 +228,9 @@ function tab_addRow() {
                  label: "保存",
                  className: "btn btn-sm btn-success",
                  callback: function () {
+                	 if(vailDateParam('ADD')){
+                		 return false;
+                	 }
                 	 $.ajax({
                 		   type: "POST",
                 		   url: "addUser",
@@ -472,5 +476,29 @@ function updatePasswd() {
     	$('#update_passwd input[name=userName]').val(row.username);
     	$('#update_passwd input[name=id]').val(row.id);
     }
+}
+function vailDateParam(status){
+	var isSuccess;
+	var username = $('form input[name=username]').val();
+	$.ajax({
+		   type: "GET",
+		   url: "validate",
+		   async: false,
+		   data: "username="+username+"&status="+status,
+		   success: function(data){
+			   if('success' != data.type){
+				   Lobibox.notify("error", {
+					   	size: 'mini',
+		        		position: 'center top',
+		        		msg: data.message
+		        	});
+				  isSuccess=true;
+			   }
+			   if('success'==data.type){
+				   isSuccess=false;
+			   }
+		   }
+		});
+	return isSuccess;
 }
 });    

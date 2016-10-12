@@ -22,6 +22,10 @@ public class Schedule implements Serializable {
 
     private String userName;
 
+    private String orderId;
+
+    private String orderName;
+
     private String createUser;
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") 
     private Date createTime;
@@ -31,27 +35,6 @@ public class Schedule implements Serializable {
     private Date modifyTime;
 
     private Byte delFlag;
-    
-    private String scheduleMsg;
-
-    private String placeMsg;
-    
-    public String getScheduleMsg() {
-		return scheduleMsg;
-	}
-
-	public void setScheduleMsg(String scheduleMsg) {
-		this.scheduleMsg = scheduleMsg;
-	}
-
-	public String getPlaceMsg() {
-		return placeMsg;
-	}
-
-	public void setPlaceMsg(String placeMsg) {
-		this.placeMsg = placeMsg;
-	}
-
 
     private static final long serialVersionUID = 1L;
 
@@ -117,6 +100,22 @@ public class Schedule implements Serializable {
 
     public void setUserName(String userName) {
         this.userName = userName == null ? null : userName.trim();
+    }
+
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId == null ? null : orderId.trim();
+    }
+
+    public String getOrderName() {
+        return orderName;
+    }
+
+    public void setOrderName(String orderName) {
+        this.orderName = orderName == null ? null : orderName.trim();
     }
 
     public String getCreateUser() {

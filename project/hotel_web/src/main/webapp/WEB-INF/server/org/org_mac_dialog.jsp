@@ -9,7 +9,7 @@
         		<option value=""></option>
         		<c:if test="${null != orgs}">
 					<c:forEach items="${orgs}" var="org">
-				    	 <option value="${org.id}">${org.orgName}</option>
+				    	 <option value="${org.id}-${org.orgName}">${org.orgName}</option>
 					</c:forEach>
 				</c:if>
         	</select>
@@ -18,7 +18,7 @@
       	<div class="form-group">
  		<label class="col-sm-3 control-label">设备名称</label>
        	<div class="col-sm-9">
-       		<input type="text" class="form-control input-xlarge" name="macName"  value="">
+       		<input type="text" class="form-control input-xlarge" name="macName"  value=""  data-validation-matches-match="email" data-validation-matches-message= "Must match email address entered above" >
        	</div>
        </div>
  		<div class="form-group">

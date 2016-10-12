@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>菜单设置</title>
+		<title>班次类型</title>
 		<%@ include file="/common/include/head_meta.jsp"%>
 		<style type="text/css">
 			.ui-dialog *
@@ -105,13 +105,13 @@ tr.pq-row-delete td
 
 						<div class="row">
 							<div class="col-xs-12">
-								<div class="alert alert-info">
+								<!-- <div class="alert alert-info">
 									<i class="icon-hand-right"></i>
 									<span>双击可以查看记录信息</span>
 									<button class="close" data-dismiss="alert">
 										<i class="icon-remove"></i>
 									</button>
-								</div>
+								</div> -->
 								<!-- PAGE CONTENT BEGINS -->
 								<div id="type_grid"></div>
 								<!-- PAGE CONTENT ENDS -->
@@ -127,6 +127,7 @@ tr.pq-row-delete td
 		
 <!--  dialog  -->
 <div id="type_dialog" class="dialog-model"><%@ include file="workOrderType_dialog.jsp"%></div>
+<div id="workOrderType_export_dialog" class="dialog-model"><%@ include file="workOrderType_export_dialog.jsp"%></div>
 		<script type="text/javascript">
 			<%@ include file="workOrderType.js"%>
 		</script>

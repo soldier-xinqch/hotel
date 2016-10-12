@@ -24,4 +24,15 @@ public interface IAttendanceExceptionalService extends BaseService<AttendanceExc
 	 * @return
 	 */
 	List<AttendanceExceptional> findAttendanceExceptionalByOrgs(List<Org> orgs);
+	/**
+	 * 通过条件查询考勤异常信息
+	 * @param orgs
+	 * @param exceptions
+	 * @param staffId
+	 * @param startTime
+	 * @param endTime
+	 * @return
+	 */
+	List<AttendanceExceptional> findAttendanceExceptionalByLikes(List<Org> orgs, List<String> exceptions,
+			String[] staffId, String startTime, String endTime);
 }

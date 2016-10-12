@@ -1,5 +1,5 @@
 ﻿﻿    $(function () {
-    	//首先定义表格选项
+	//首先定义表格选项
 	var tabId = $("#mac_grid");
 	var dataModel = {
 			 	cache: true,
@@ -12,7 +12,8 @@
 	            method: "GET",
 	            url: "pageData",
 	            getData: function (dataJSON) {  
-	                return { curPage: dataJSON.pageNo, totalRecords: dataJSON.pageSize,data: dataJSON.list };
+	            	var data = dataJSON.list;
+	                return { curPage: dataJSON.pageNo, totalRecords: dataJSON.total, data: data };
 	            }
 	        };
 	var colModel = [
@@ -153,7 +154,7 @@
 	                 label: "保存",
 	                 className: "btn btn-sm btn-success",
 	                 callback: function () {
-	                	 if(vailDateParam()){
+	                	 if(vailDateParam('ADD')){
 	                		 return false;
 	                	 }
  	                	 $.ajax({
@@ -198,6 +199,7 @@
     		deselect: false,
     		width:'270px'
     	});
+//    	$('#add_tab_from input[name=mac]').not("[type=submit]").jqBootstrapValidation();
     }
     function formatRepoProvince(repo) {
         if (repo.loading) return repo.text;
@@ -276,18 +278,15 @@
         }
     }
     
-    function vailDateParam(){
+    function vailDateParam(status){
     	var isSuccess;
     	var macName = $('form input[name=macName]').val();
     	var mac = $('form input[name=mac]').val();
-    	alert(macName);
-    	alert(mac);
-    	alert("macName="+macName+"&mac="+mac);
     	$.ajax({
  		   type: "GET",
  		   url: "validate",
  		   async: false,
- 		   data: "macName="+macName+"&mac="+mac,
+ 		   data: "macName="+macName+"&mac="+mac+"&status="+status,
  		   success: function(data){
  			   if('success' != data.type){
  				   Lobibox.notify("error", {
@@ -295,9 +294,11 @@
  		        		position: 'center top',
  		        		msg: data.message
  		        	});
- 				  isSuccess=false;
+ 				  isSuccess=true;
  			   }
- 			  isSuccess=true;
+ 			   if('success'==data.type){
+ 				   isSuccess=false;
+ 			   }
  		   }
  		});
     	return isSuccess;

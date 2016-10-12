@@ -269,8 +269,76 @@
     <include refid="Base_Column_List" />
     from attendance_brush brush,staff,org_mac 
     where brush.del_flag=0 and staff.org_id=org_mac.org_id and staff.id=brush.staff_id and org_mac.org_id=brush.org_id
-    and  brush10 = #{day,jdbcType=VARCHAR} and staff.staff_no=no and org_mac.mac = mac
+    and  brush10 = #{day,jdbcType=VARCHAR} and staff.staff_no=#{no,jdbcType=VARCHAR} and org_mac.mac = #{mac,jdbcType=VARCHAR}
   </select>
   
+   <select id="findAttendanceBrushByLikes" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from attendance_brush 
+    where del_flag=0 
+    <if test="null != orgIds and orgIds.size>0 ">
+    	 and org_id in 
+	    <foreach close=")" collection="orgIds" index="" item="item" open="(" separator=",">  
+	     	 #{item.id, jdbcType=VARCHAR}  
+	    </foreach> 
+    </if>
+    <if test="null != staffId and staffId.length>0">
+    	 and staff_id in 
+	    <foreach close=")" collection="staffId" index="" item="item" open="(" separator=",">  
+	     	 #{item, jdbcType=VARCHAR}
+	    </foreach> 
+    </if>
+    <if test="null !=startTime and null = endTime">
+    	and time <![CDATA[ >= ]]> #{startTime}
+    </if>
+    <if test="null ==startTime and null != endTime">
+    	and time <![CDATA[ <= ]]> #{endTime}
+    </if>
+    <if test="null !=startTime and ''!= endTime">
+    	and time between #{startTime} and #{endTime}
+    </if>
+  </select>
+  
+  
+  
+  
+  <select id="findConts" resultType="org.hotel.model.AttendanceSearch" parameterType="java.util.List" >
+    SELECT
+	staff.`staff_name` AS staff_name,
+	staff.`staff_no` AS staff_no,
+	staff.`org_name` AS org_name,
+	COUNT(staff.`keep_rest_day`) AS keep_day,
+	COUNT(staff.`year_rest_day`) AS year_day,
+	CASE attendance_record.`attendance_type_name` WHEN '平常加班' THEN COUNT(attendance_record.`num`) END AS a_rest,
+	CASE attendance_record.`attendance_type_name` WHEN '假日加班' THEN COUNT(attendance_record.`num`) END AS b_rest,
+	CASE attendance_record.`attendance_type_name` WHEN '节日加班' THEN COUNT(attendance_record.`num`) END AS c_rest,
+	CASE attendance_record.`attendance_type_name` WHEN '倒休' THEN COUNT(attendance_record.`num`) END AS d_rest,
+	CASE attendance_record.`attendance_type_name` WHEN '年假' THEN COUNT(attendance_record.`num`) END AS e_rest,
+	CASE attendance_record.`attendance_type_name` WHEN '事假' THEN COUNT(attendance_record.`num`) END AS f_rest,
+	CASE attendance_record.`attendance_type_name` WHEN '病假' THEN COUNT(attendance_record.`num`) END AS g_rest,
+	CASE attendance_record.`attendance_type_name` WHEN '探亲假' THEN COUNT(attendance_record.`num`) END AS h_rest,
+	CASE attendance_record.`attendance_type_name` WHEN '工伤假' THEN COUNT(attendance_record.`num`) END AS i_rest,
+	CASE attendance_record.`attendance_type_name` WHEN '产假' THEN COUNT(attendance_record.`num`) END AS j_rest,
+	CASE attendance_record.`attendance_type_name` WHEN '婚假' THEN COUNT(attendance_record.`num`) END AS k_rest,
+	CASE attendance_record.`attendance_type_name` WHEN '丧假' THEN COUNT(attendance_record.`num`) END AS l_rest,
+	CASE attendance_record.`attendance_type_name` WHEN '旷工' THEN COUNT(attendance_record.`num`) END AS m_rest,
+	CASE attendance_record.`attendance_type_name` WHEN '法定假日' THEN COUNT(attendance_record.`num`) END AS n_rest,
+	CASE attendance_record.`attendance_type_name` WHEN '公出' THEN COUNT(attendance_record.`num`) END AS o_rest,
+	CASE attendance_record.`attendance_type_name` WHEN '存休' THEN COUNT(attendance_record.`num`) END AS p_rest,
+	CASE attendance_exceptional.exception_type WHEN 'LATER' THEN COUNT(attendance_record.`num`) END AS q_rest,
+	CASE attendance_exceptional.exception_type WHEN 'EARLYQUIT' THEN COUNT(attendance_record.`num`) END AS t_rest,
+	COUNT(wo.work_time) AS s_rest
+	FROM 
+	staff LEFT JOIN attendance_record ON staff.`id`=attendance_record.`staff_id` 
+	LEFT JOIN attendance_exceptional ON attendance_record.`staff_id` =attendance_record.`staff_id`
+	LEFT JOIN (SELECT schedule_staff.`staff_id`,work_order.`work_time` FROM schedule_staff LEFT JOIN work_order ON schedule_staff.`order_id`=work_order.`id`) wo 
+	ON  attendance_exceptional.staff_id=wo.staff_id
+	and staff.org_id in 
+    <foreach close=")" collection="orgs" index="" item="item" open="(" separator=",">  
+     	 #{item.id, jdbcType=VARCHAR}  
+    </foreach> 
+    
+  </select>
   
 </mapper>

@@ -23,60 +23,126 @@
 	        			 }
 	        		},
 	        	];
-	var tab_toolbar = {
-            items: [
-                { type: 'button', label: '添加', listeners: [{ click: tab_addRow}], cls: 'btn btn-sm btn-success' },
-                { type: 'button', label: '修改', listeners: [{ click:tab_editRow}], cls: 'btn btn-sm btn-primary' },
-                { type: 'button', label: '删除', listeners: [{ click: tab_deleteRow}], cls: 'btn btn-sm btn-danger' }
-            ]
-        };
-	
-    var obj = { 
-    	title:"组织信息列表",
-//			width: '100%',
-		height: "100%",
-//            minWidth: 500,
-//            height: 400,
-        flexHeight: true,
-        showTitle:false,
-		showButton:true,
-		wrap:false,
-		track: true,
-		resizable: true,//调整网格的居中和垂直
-		sortIndx: 0,//排序列或多列的dataIndx。它变成多列排序使用阵列时
-        colModel:colModel,
-        dataModel:dataModel,
-        numberCell:{resizable:true, title: "#"},
-        selectionModel: { mode: 'single' },
-        selectionModel: { type: 'row' },//选中 row 为整行 cell 为整列 model 为单元格
-        pageModel: { type: "remote", rPP: 10, rPPOptions: [10, 20, 50, 100] },//定义表尾分页参数 local为本地数据，remote 为远程数据
-        scrollModel: { autoFit: false },
-        collapsible: { on: true, collapsed: false }
-    };
-    obj.columnTemplate = {            
-        title: function (ui) {
-            return ui.column.Title + " (" + ui.column.width + ")";
-        }
-    };
-    obj.toolbar = tab_toolbar;
-    var $grid = tabId.pqGrid(obj);
-    $grid.pqGrid("option", $.paramquery.pqGrid.regional['zh']);            
-    $grid.find(".pq-pager").pqPager("option", $.paramquery.pqPager.regional['zh']);   
-    //bind width to select list.
-    $("#sl_width").change(function (evt) {
-        var val = $(this).val();
-        $grid.pqGrid('option', 'width', val)
-                .pqGrid('refresh');
-    });
-    $("#sl_margin").change(function (evt) {
-        var val = $(this).val();
-        $grid.css('margin', val).pqGrid('refresh');
-    });
+		var topicjson={
+				   "response": [
+				          {
+				              "id": "1",
+				              "elementName": "Grouping",
+				              level:"0", parent:"", isLeaf:false, loaded:true
+				          },
+				          {
+				              "id": "1_1",
+				              "elementName": "Simple Grouping",
+				              level:"1", parent:"1", isLeaf:false, loaded:true
+				          },
+				          {
+				              "id": "1_2",
+				              "elementName": "May be some other grouping",
+				              level:"3", parent:"1", isLeaf:false, loaded:true
+				          },
+				          {
+				              "id": "2",
+				              "elementName": "CustomFormater",
+				              level:"0", parent:"", isLeaf:false, loaded:true
+				          },
+				          {
+				              "id": "2_1",
+				              "elementName": "Image Formatter",
+				              level:"1", parent:"2", isLeaf:false, loaded:true
+				          }
+				      ]
+				   };
+		jQuery('#tree').jqGrid({
+			"url":"/org/pageData",
+			datatype: "json",
+			 autowidth:true,
+			"hoverrows":false,
+			"viewrecords":false,
+			"gridview":true,
+			"editurl" : "clientArray",
+			"ExpandColumn":"elementName",
+			ExpandColClick:true,
+			viewrecords : true,
+			"height":"auto",
+			"sortname":"id",
+			"scrollrows":true,
+			"treeGrid":true,
+			"treedatatype":"json",
+			"treeGridModel":"adjacency",
+			"treeIcons": {plus:'icon-plus',minus:'icon-minus',leaf:'ui-icon-document-b'},
+			"loadonce":true,
+			"rowNum":1000, 
+			loadui: "disable",
+			"treeReader":{
+				"parent_id_field":"parentId",
+				"level_field":"level",
+				"leaf_field":"isLeaf",
+				"expanded_field":"expanded",
+				"loaded":"loaded",
+				"icon_field":"icon"
+			},
+//			datastr: topicjson,
+//			   datatype: "jsonstring",
+			   colNames: ["部门名称","部门介绍","111"],
+			   colModel: [
+			       {name: "elementName", editable:true,width:250, resizable: false},
+			       {name: "id",width:200, hidden:false, key:true},
+			       {name: "url",width:1, editable:true,hidden:true}
+			   ],
+//			   jsonReader: {
+//			       repeatitems: false,
+//			       root: "response"
+//			   },
+			   loadComplete : function() {
+					var table = this;
+					setTimeout(function(){
+						updatePagerIcons(table);
+					}, 0);
+				},
+				ondblClickRow:function(rowid, iRow, iCol, e){
+					/* edit(rowid); */
+					alert(1);
+				},
+			"pager":"#pager"
+		});
+		// nable add
+		jQuery('#tree').jqGrid('navGrid','#pager',
+				{
+					"edit":false,
+					"add":false,
+					"del":false,
+					"search":false,
+					"refresh":true,
+					"view":false,
+					"excel":false,
+					"pdf":false,
+					"csv":false,
+					"columns":false
+				},
+				{"drag":true,"resize":true,"closeOnEscape":true,"dataheight":150},
+				{"drag":true,"resize":true,"closeOnEscape":true,"dataheight":150}
+				);
+				jQuery('#tree').jqGrid('bindKeys');
+		function updatePagerIcons(table) {
+			var replacement = 
+			{
+				'ui-icon-seek-first' : 'icon-double-angle-left bigger-140',
+				'ui-icon-seek-prev' : 'icon-angle-left bigger-140',
+				'ui-icon-seek-next' : 'icon-angle-right bigger-140',
+				'ui-icon-seek-end' : 'icon-double-angle-right bigger-140'
+			};
+			$('.ui-pg-table:not(.navtable) > tbody > tr > .ui-pg-button > .ui-icon').each(function(){
+				var icon = $(this);
+				var $class = $.trim(icon.attr('class').replace('ui-icon', ''));
+				
+				if($class in replacement) icon.attr('class', 'ui-icon '+replacement[$class]);
+			})
+		}
     //edit Row
     function tab_editRow() {
-        var rowIndx = getRowIndx();
-        if (rowIndx != null) {
-            var row = $grid.pqGrid('getRowData', {rowIndx: rowIndx});
+//        var rowIndx = getRowIndx();
+//        if (rowIndx != null) {
+//            var row = $grid.pqGrid('getRowData', {rowIndx: rowIndx});
             var updateDialogMsg = '<div"><form id="update_tab_from" class="form-horizontal" role="form">'+$("#org_dialog").html()+'</form></div>';
             bootbox.dialog({
             	title: "修改组织信息", 
@@ -122,8 +188,8 @@
     	    	},
 //        	    	callback:setTimeout(updateMeuns(row),500)
             });
-            updateMeuns(row);
-        }
+//            updateMeuns(row);
+//        }
     }
     function updateMeuns(row){
     	$('#update_tab_from input[name=id]').val(row.id);

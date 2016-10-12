@@ -13,12 +13,22 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.util.CollectionUtils;
+import org.hotel.common.CommEnum.ATTENDANCEEXCEPTION;
 import org.hotel.common.CommEnum.RESULTFLAG;
 import org.hotel.common.CommEnum.STAFFSTATUS;
 import org.hotel.model.AttendanceBrush;
+import org.hotel.model.AttendanceExceptional;
+import org.hotel.model.OrgMac;
+import org.hotel.model.ScheduleStaff;
 import org.hotel.model.Staff;
+import org.hotel.model.WorkOrder;
 import org.hotel.service.IAttendanceBrushService;
+import org.hotel.service.IAttendanceExceptionalService;
+import org.hotel.service.IOrgMacService;
+import org.hotel.service.IScheduleService;
 import org.hotel.service.IStaffService;
+import org.hotel.service.IWorkOrderService;
+import org.hotel.utils.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -43,30 +53,38 @@ public class WebServiceController {
 	private IStaffService staffService;
 	@Autowired
 	private IAttendanceBrushService attendanceBrushService;
+	@Autowired
+	private IOrgMacService orgMacService;
+	@Autowired
+	private IScheduleService scheduleService;
+	@Autowired
+	private IWorkOrderService workOrderService;
+	@Autowired
+	private IAttendanceExceptionalService attendanceExceptionalService;
 	
 	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	
 	private String setBrushTime(JSONObject jsonObj){
 		StringBuffer timeBf = new StringBuffer();
-		if(jsonObj.containsKey("year")&&StringUtils.isEmpty(jsonObj.getString("year")))timeBf.append(jsonObj.getString("year")+"-");
-		if(jsonObj.containsKey("month")&&StringUtils.isEmpty(jsonObj.getString("month")))timeBf.append(jsonObj.getString("month")+"-");
-		if(jsonObj.containsKey("day")&&StringUtils.isEmpty(jsonObj.getString("day")))timeBf.append(jsonObj.getString("day")+" ");
-		if(jsonObj.containsKey("hour")&&StringUtils.isEmpty(jsonObj.getString("hour")))	timeBf.append(jsonObj.getString("hour")+":");
-		if(jsonObj.containsKey("minute")&&StringUtils.isEmpty(jsonObj.getString("minute")))	timeBf.append(jsonObj.getString("minute")+":");
-		if(jsonObj.containsKey("second")&&StringUtils.isEmpty(jsonObj.getString("second")))	timeBf.append(jsonObj.getString("second"));
+		if(jsonObj.containsKey("year")&&!StringUtils.isEmpty(jsonObj.getString("year")))timeBf.append(jsonObj.getString("year")+"-");
+		if(jsonObj.containsKey("month")&&!StringUtils.isEmpty(jsonObj.getString("month")))timeBf.append(jsonObj.getString("month")+"-");
+		if(jsonObj.containsKey("day")&&!StringUtils.isEmpty(jsonObj.getString("day")))timeBf.append(jsonObj.getString("day")+" ");
+		if(jsonObj.containsKey("hour")&&!StringUtils.isEmpty(jsonObj.getString("hour")))	timeBf.append(jsonObj.getString("hour")+":");
+		if(jsonObj.containsKey("minute")&&!StringUtils.isEmpty(jsonObj.getString("minute")))	timeBf.append(jsonObj.getString("minute")+":");
+		if(jsonObj.containsKey("second")&&!StringUtils.isEmpty(jsonObj.getString("second")))	timeBf.append(jsonObj.getString("second"));
 		return timeBf.toString();
 	}
 	
 	private String searchBruchParam(JSONObject jsonObj){
 		StringBuffer timeBf = new StringBuffer();
-		if(jsonObj.containsKey("year")&&StringUtils.isEmpty(jsonObj.getString("year")))timeBf.append(jsonObj.getString("year")+"-");
-		if(jsonObj.containsKey("month")&&StringUtils.isEmpty(jsonObj.getString("month")))timeBf.append(jsonObj.getString("month")+"-");
-		if(jsonObj.containsKey("day")&&StringUtils.isEmpty(jsonObj.getString("day")))timeBf.append(jsonObj.getString("day"));
+		if(jsonObj.containsKey("year")&&!StringUtils.isEmpty(jsonObj.getString("year")))timeBf.append(jsonObj.getString("year")+"-");
+		if(jsonObj.containsKey("month")&&!StringUtils.isEmpty(jsonObj.getString("month")))timeBf.append(jsonObj.getString("month")+"-");
+		if(jsonObj.containsKey("day")&&!StringUtils.isEmpty(jsonObj.getString("day")))timeBf.append(jsonObj.getString("day"));
 		return timeBf.toString();
 	}
 	
-	private void addBrushMsg(Map<String,Integer> numMap,String numKey,JSONObject jsonObj){
+	private void addBrushMsg(Map<String,Integer> numMap,String numKey,JSONObject jsonObj, Map<String, AttendanceBrush> brushMap){
 		try {
 			numMap.put(numKey, 1);
 			Staff staff = staffService.findStaffAndMacByNoOrName(jsonObj.getString("enrollNumber"), null, jsonObj.getString("Mac"));
@@ -80,6 +98,7 @@ public class WebServiceController {
 			brush.setBrush1(setBrushTime(jsonObj));
 			int isSuccess = attendanceBrushService.insert(brush);
 			if(isSuccess>0){
+				brushMap.put(numKey, brush);
 				logger.error("时间：{}[uploadKqInfo-addBrushMsg] 上传刷卡：{}，工号：{} 成功",new Date(),staff.getStaffName(),staff.getStaffNo());
 			}else{
 				logger.error("时间：{}[uploadKqInfo-addBrushMsg] 上传刷卡：{}，工号：{} 失败",new Date(),staff.getStaffName(),staff.getStaffNo());
@@ -89,9 +108,10 @@ public class WebServiceController {
 		}
 	}
 	
-	private void modifyBrushMsg(AttendanceBrush brush){
+	private void modifyBrushMsg(String numKey,AttendanceBrush brush,Map<String, AttendanceBrush> brushMap){
 		int isSuccess = attendanceBrushService.modify(brush);
 		if(isSuccess>0){
+			brushMap.put(numKey, brush);
 			logger.error("时间：{}[uploadKqInfo-modify] 上传刷卡：{}，工号：{} 成功",new Date(),brush.getStaffName(),brush.getStaffNo());
 		}else{
 			logger.error("时间：{}[uploadKqInfo-modify] 上传刷卡：{}，工号：{} 失败",new Date(),brush.getStaffName(),brush.getStaffNo());
@@ -121,7 +141,8 @@ public class WebServiceController {
 	@RequestMapping(value = "/uploadKqInfo",method=RequestMethod.POST)
 	public @ResponseBody Map<String, Object> uploadKqInfo(HttpServletRequest request,
 			String kqJson) {
-		Map<String, Object> result = new HashMap<String, Object>();
+		Map<String, Object> result =Maps.newHashMap();
+		Map<String, AttendanceBrush> brushMap = Maps.newHashMap();
 		if(StringUtils.isEmpty(kqJson)){
 			result.put("status", RESULTFLAG.ERROR.getValue());
 			result.put("message","上传考勤信息为空" );
@@ -157,7 +178,7 @@ public class WebServiceController {
 							case 8:
 								brush.setBrush8(setBrushTime(jsonObj));break;
 							}
-							modifyBrushMsg(brush);
+							modifyBrushMsg(numKey, brush, brushMap);
 						}else{
 							if(null == brush.getBrush1())brush.setBrush1(setBrushTime(jsonObj));
 							if(null == brush.getBrush2()&&compareBrushTime(brush.getBrush1(), jsonObj))brush.setBrush2(setBrushTime(jsonObj));
@@ -167,10 +188,10 @@ public class WebServiceController {
 							if(null == brush.getBrush6()&&compareBrushTime(brush.getBrush5(), jsonObj))brush.setBrush6(setBrushTime(jsonObj));
 							if(null == brush.getBrush7()&&compareBrushTime(brush.getBrush6(), jsonObj))brush.setBrush7(setBrushTime(jsonObj));
 							if(null == brush.getBrush8()&&compareBrushTime(brush.getBrush7(), jsonObj))brush.setBrush8(setBrushTime(jsonObj));
-							modifyBrushMsg(brush);
+							modifyBrushMsg(numKey, brush, brushMap);
 						}
 					}else{
-						addBrushMsg(numMap, numKey, jsonObj);
+						addBrushMsg(numMap, numKey, jsonObj,brushMap);
 					}
 					System.out.println(jsonObj.getString("year"));
 					System.out.println(jsonObj.getString("month"));
@@ -178,6 +199,7 @@ public class WebServiceController {
 					System.out.println(jsonObj.getString("hour"));
 					System.out.println(jsonObj.getString("minute"));
 					System.out.println(jsonObj.getString("second"));
+					dealBrushMsg(brushMap);
 				}
 			}
 		} catch (Exception e) {
@@ -187,6 +209,190 @@ public class WebServiceController {
 		result.put("message","上传全部员工信息成功" );
 		return result;
 	}
+	
+	private void dealBrushMsg(Map<String, AttendanceBrush> brushMap){
+		try {
+			if(null != brushMap){
+				for (String brushKey : brushMap.keySet()) {
+					AttendanceBrush brush = brushMap.get(brushKey);
+					String brush1 = brush.getBrush1();
+					ScheduleStaff schedule = scheduleService.findStaffScheduleByNoAndTime(brush.getStaffNo(), brush1);
+					if(null != schedule){
+						WorkOrder order = workOrderService.findOrderById(schedule.getOrderId());
+						if(StringUtils.isEmpty(brush1)){
+							setExceptions(schedule, order, brush, ATTENDANCEEXCEPTION.NOCARD.getValue());
+						}else{
+							if(!StringUtils.isEmpty(order.getOnEnd())){
+								String[] temps = brush1.split(" ");
+								SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+								Date brushDate1 = format.parse(temps[1]);
+								Date orderDate = format.parse(order.getOnEnd());
+								checkIsLater(brushDate1, orderDate, schedule, order, brush);
+							}else{
+								String[] temps = brush1.split(" ");
+								SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+								Date brushDate1 = format.parse(temps[1]);
+								Date orderDate = format.parse(order.getBeginWork());
+								checkIsLater(brushDate1, orderDate, schedule, order, brush);
+							} 
+							checkIsLoseBrush(schedule, brush, order);
+						}
+					}else{
+						setExceptions(schedule, null, brush, ATTENDANCEEXCEPTION.NOORDER.getValue());
+					}
+				}
+				
+			}
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		
+		
+	}
+	
+	private void checkIsLater(Date brushDate1,Date orderDate,ScheduleStaff schedule,WorkOrder order,AttendanceBrush brush){
+		if(brushDate1.after(orderDate)){
+			setExceptions(schedule, order, brush, ATTENDANCEEXCEPTION.LATER.getValue());
+ 		}
+	}
+	/**
+	 *  验证是否缺卡
+	 * @param brush
+	 */
+	private void checkIsLoseBrush(ScheduleStaff schedule,AttendanceBrush brush,WorkOrder order){
+		try {
+			SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+			if(!StringUtils.isEmpty(brush.getBrush8())){
+				String[] temps = brush.getBrush8().split(" ");
+				Date brushEndDate = format.parse(temps[1]);
+				if(!StringUtils.isEmpty(order.getOffEnd())){
+					Date orderDate = format.parse(order.getOffEnd());
+					checkIsEarly(brushEndDate, orderDate, schedule, order, brush);
+				}else{
+					Date orderDate = format.parse(order.getEndWork());
+					checkIsEarly(brushEndDate, orderDate, schedule, order, brush);
+				} 
+			}else if(!StringUtils.isEmpty(brush.getBrush7())){
+				String[] temps = brush.getBrush7().split(" ");
+				Date brushEndDate = format.parse(temps[1]);
+				if(!StringUtils.isEmpty(order.getOffEnd())){
+					Date orderDate = format.parse(order.getOffEnd());
+					checkIsEarly(brushEndDate, orderDate, schedule, order, brush);
+				}else{
+					Date orderDate = format.parse(order.getEndWork());
+					checkIsEarly(brushEndDate, orderDate, schedule, order, brush);
+				}
+			}else if(!StringUtils.isEmpty(brush.getBrush6())){
+				String[] temps = brush.getBrush6().split(" ");
+				Date brushEndDate = format.parse(temps[1]);
+				if(!StringUtils.isEmpty(order.getOffEnd())){
+					Date orderDate = format.parse(order.getOffEnd());
+					checkIsEarly(brushEndDate, orderDate, schedule, order, brush);
+				}else{
+					Date orderDate = format.parse(order.getEndWork());
+					checkIsEarly(brushEndDate, orderDate, schedule, order, brush);
+				}
+			}else if(!StringUtils.isEmpty(brush.getBrush5())){
+				String[] temps = brush.getBrush5().split(" ");
+				Date brushEndDate = format.parse(temps[1]);
+				if(!StringUtils.isEmpty(order.getOffEnd())){
+					Date orderDate = format.parse(order.getOffEnd());
+					checkIsEarly(brushEndDate, orderDate, schedule, order, brush);
+				}else{
+					Date orderDate = format.parse(order.getEndWork());
+					checkIsEarly(brushEndDate, orderDate, schedule, order, brush);
+				}
+			}else if(!StringUtils.isEmpty(brush.getBrush4())){
+				String[] temps = brush.getBrush4().split(" ");
+				Date brushEndDate = format.parse(temps[1]);
+				if(!StringUtils.isEmpty(order.getOffEnd())){
+					Date orderDate = format.parse(order.getOffEnd());
+					checkIsEarly(brushEndDate, orderDate, schedule, order, brush);
+				}else{
+					Date orderDate = format.parse(order.getEndWork());
+					checkIsEarly(brushEndDate, orderDate, schedule, order, brush);
+				}
+			}else if(!StringUtils.isEmpty(brush.getBrush3())){
+				if("两头班".equals(order.getWorkTypeName())){
+					setExceptions(schedule, order, brush, ATTENDANCEEXCEPTION.LOSECARD.getValue());
+					return ;
+				}
+				String[] temps = brush.getBrush3().split(" ");
+				Date brushEndDate = format.parse(temps[1]);
+				if(!StringUtils.isEmpty(order.getOffEnd())){
+					Date orderDate = format.parse(order.getOffEnd());
+					checkIsEarly(brushEndDate, orderDate, schedule, order, brush);
+				}else{
+					Date orderDate = format.parse(order.getEndWork());
+					checkIsEarly(brushEndDate, orderDate, schedule, order, brush);
+				}
+			}else if(!StringUtils.isEmpty(brush.getBrush2())){
+				if("两头班".equals(order.getWorkTypeName())){
+					setExceptions(schedule, order, brush, ATTENDANCEEXCEPTION.LOSECARD.getValue());
+					return ;
+				}
+				String[] temps = brush.getBrush2().split(" ");
+				Date brushEndDate = format.parse(temps[1]);
+				if(!StringUtils.isEmpty(order.getOffEnd())){
+					Date orderDate = format.parse(order.getOffEnd());
+					checkIsEarly(brushEndDate, orderDate, schedule, order, brush);
+				}else{
+					Date orderDate = format.parse(order.getEndWork());
+					checkIsEarly(brushEndDate, orderDate, schedule, order, brush);
+				}
+			}else{
+				setExceptions(schedule, order, brush, ATTENDANCEEXCEPTION.LOSECARD.getValue());
+			}
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void checkIsEarly(Date brushEndDate,Date orderDate,ScheduleStaff schedule,WorkOrder order,AttendanceBrush brush){
+		if(brushEndDate.before(orderDate)){
+			setExceptions(schedule, order, brush,ATTENDANCEEXCEPTION.EARLYQUIT.getValue());
+		}
+	}
+	
+	private void setExceptions(ScheduleStaff schedule,WorkOrder order,AttendanceBrush brush,String exceptionStatus){
+		try {
+			AttendanceExceptional exception = new AttendanceExceptional();
+			exception.setId(CommonUtil.getUUID());
+			exception.setStaffId(schedule.getStaffId());
+			//导出的时候连表查出来
+//			exception.setStaffNo(schedule.getStaffNo());
+			exception.setStaffName(schedule.getStaffName());
+			exception.setOrgId(schedule.getOrgId());
+			exception.setOrgName(schedule.getOrgName());
+			exception.setWorkOrderId(schedule.getOrderId());
+			if(null != order){
+				exception.setWorkOrderName(order.getOrderNo());
+				exception.setWorkOrderTypeId(order.getWorkType());
+				exception.setWorkOrderTypeName(order.getWorkTypeName());
+			}
+			exception.setAttendanceTime(brush.getTime());
+			exception.setExceptionType(exceptionStatus);
+			exception.setBrush1(brush.getBrush1());
+			exception.setBrush2(brush.getBrush2());
+			exception.setBrush3(brush.getBrush3());
+			exception.setBrush4(brush.getBrush4());
+			exception.setBrush5(brush.getBrush5());
+			exception.setBrush6(brush.getBrush6());
+			exception.setBrush7(brush.getBrush7());
+			exception.setBrush8(brush.getBrush8());
+			int isSuccess = attendanceExceptionalService.insert(exception);
+			if(isSuccess>0){
+				logger.error("时间：{}[uploadKqInfo-modify] 添加考勤异常[早退]信息成功",new Date(),exception.getId());
+			}else{
+				logger.error("时间：{}[uploadKqInfo-modify] 添加考勤异常[早退]信息失败",new Date(),schedule.getStaffId());
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	
 	/**
 	 *  上传全部员工信息
 	 * @param request
@@ -206,7 +412,6 @@ public class WebServiceController {
 	 * @param empJson
 	 * @return
 	 */
-//	empJson=[{ID:47537,NAME:'D5D4F6CE',MAC:00:17:61:12:5B:09,FACETMP:''}]
 //	[{ID:1,NAME:'6F62656469656E74',MAC:"00:17:61:12:5B:09",FINGERTMP0:'54554654557A4978414141454167454543415548436337514141416341326B42414141416779386A58674935414959506C7743584149304E325142564141345064514239416F6B505167422F414C415067414B4441415550426746484149734E4E4143494150555045514356416F6F504C514355414C455064674B6841483050426746694142414D4F7743704148415032414338417645506D674443414555502B514C5A414238504D6741594147414E74774464414951507377446D416E41505877446C414B495065674C7341477350525141314146674E3877443041436B506151447941684D4F755144384146634F67514C384147494F544144504165514E7451414C41596F504F414155417A7350664141564166774F33414966415A774F5551446841546F4E324141734158635070414171417A4D504A67417941595950432F314B457965444977434F68663939316F713368354F44312F39326861494164594275414A4D48316F7433663039394D6E3269425A654235494231674D6145537766762F775A363559413142697341336E73692F58384F4C6F5679396675497550352B674D70387534426D664C2B504976356E454A345674766F714461506D505173506479502B54486336394A34473841694E444438514666714A442B503875663545434B494578667563667848314B77794B384B2B4D5249436C694479546759413943477351796670734B3872773261655168334A3578506970656772795078432B6F4B37454664757143632F534A5362585A6E6F575751303459374C39794E7A7A504B7674495055322B2F74584D6763665A766F547564322F44515167505148484F786D4D4167423748675043304141584851465A4D4D426B2F775841784764394267444B4A41794A2F7738436C69554A7776334142564632415148754A52502B444D56454967524E5732542F4267444A4C506C452F775941446A66394F384652456746654F516C56556A76425555304B4141784739503036774D564A5677554133464D4A6E785145436C58742F457A41574472434E4D4E4777675941326C6E5464766B5541514E683850372F4F325249616C5254772F304E414D397339507A385856504251673346444833794B7342525663414A7862522B446B7641594155415072353658676342526E34417744334441497839417639654267434851416C762F4155414D5969416B64634150596E3856556243503849374C2F73474164695344454D547854475141577A2F7745722F7759372F7854304641436D59634D4148435152736E49444177662F4255513445644B454153316448574D454161364637547755414E71657977323850415A612F68734C426E3369554467476577676E41516676424D5177426C735741616E4F3877635841464141487A754C394F734572576B464577433858414E58523730592B564439452F6A365445675377324962417731474442384741647749412F74776B77737741767430532F2F386E2F763744414372695A576E45425143794A594E3842774679356E4444684D77415775746D77634E346951584665753932776F735541494C73507A77752F7A4C302F2F346E486377415265316C695872424351432F38576E41777637452F366B4778555477587343454377436F3945614C7763444177384C43426741322B43623877434149414948396F735047776353504368437842314C45774D48437738536C4342424A4332624977734C4370674D51665130587777515153513554776B4D46464A6F544276396D4252414F4A3466394D4151512F7851304F503042456E6F5A5063504377384D516C68676A7735454445464474514D5963455151337779762B4F7638342F4658434B2F372F2F6A722F2B634C382F786F414141414141414141',FINGERTMP1:'53753954557A497841414144724C4D4543415548436337514141416272576B42414141416731456765717730414873505767443841506D6A475141364147554F5067412B724A514F75674242414D6750724B784B414967504951436D414F32697641426A414249507A51474C724367503267434A414F45506171795A4148495047514266414E2B6953514378414741506F51444272466350325144444150515053717A464146455062514157414432687651446A41454D506241446B72456B4F5067446F4149595059717A784144594E62514130414361687977443041454550625141497258454F3777414E4166675052617754415441504C7744624155476A3541416E41564150767741767251554F6B5141744155304F6436777A41614150534144794161326A673441583977397A523441454F2B3450566E73666235714C6143645768796476315952332F5844583348776C653473506A347659756E72334759387542564C77324B69322B784F58582F7A47464A786264785A5748327369666E317358734B5059524536444D50795772576F42384C3472764E613852436A375045742F3334534E4F6D46744A634974663168427473584D716C4C4358725A53673350396E573754524D652B4E62314A664D645242625135514C532B572F53305958374D6D72716C6538622F2B425476504F4F68517276364264684F516F43415266664577626A333870386676645A6559613036394732775A375A47313733733232524C63385450342F4C6B6555774171344C47354D46414C336944456D7641666773484D51467858303255663877434142574F724841776C504677734945414C3336426A576C416278464431502F4F384C396F5147735234794561377561434B797154594E6977762B7377516D73736B304D774D4172424D442F71414875545264734673555554557A422B634C42775034462F634A5377502F2F776633434F73443855777341775751512F67564D2F7555584143647838502B4A567A315352662F412F6B495678526C3659505A50775578477749502B2F4E304541425638544D4B5145514E36684A7243626D39706E384C4C70414865695277322F3549594134324B357A582F527A33774D6C5A53775034444151694D3963494C724E754E49762F2F7754704A4371786B6C6E65456A634857414734372B7A502F2F4545332B4349617242795A355038727741582F4D477A2B2F5562415273453577776D735A357830772F374342354C4470414646736D4B4F5664344149782F644B5467344C6A4437774556514C6873414762624D4F507A386B6A2F2F4D2F2F2B2F36442B51596B4E41453341344445342F7635532F43384A414558466E346C6A62516341327359777749594B412F504756356243694D50424149746C49526F454149444D68635444714147467A445274463856347A4F7A43776354497938454778734274784D6245773848444263504262734D4B41476E57535758436F6D6F4A41472F58514D5148777341624451433535304D34502F3735552F332B2F776F41774349392F5A2F392F794D4841446F75526D6F30427742413745424A426859445A764733774944436A5153546744783842674275394330477736364F41636A34512F2F2B35697A38625033392F7344392F7A722F2F6C50367750332B2F5030342F2F355277503049414D37342F2F30746751495137524244774D4551384C773850515151526866306E4141414141414141413D3D',FINGERTMP6:'53743954557A4978414141446E4B41454341554843633751414141626E576B42414141416730456564707875414159506767437741494F547767434441436750564143556E436B503541436641477750585A7972414551506477426F414432544A67433241457350585144526E4649504D67445541503450664A7A56414D414F2B514174414547547A41447A414641504851442F6E46455075774439414A4550674A7748415877504B67444A41534F532B77414D416351504A4141546E56634F6A6741554161675059357758416634507577445A4164475356514171415A674F714141746E596750785141774152514F3435784C4165594F7A414349416547545041424F41593050596742526E654D50386742544161494F6A685369344C764C6B587A3357556A616434504C41754F72652B304A4E51496B646F4D506135714451705A69685338657966376A47586B6561784176436A4D50624A6251695649432B76435048754C3776764A3768763946666F467639725672544143642F567239434142695972442F47515574423675454B6F3133676C763065346D754A6952364E484A2B68564A3248416F6D43744D4A75664636353971633276617364334B4733514B33674B4869774A3778456B495075504B6D4539386658514C6D384266747268305542546F566D66325445426D647A2F666642387554587746396A35722F72594769686E4B61384F4E384D79413041514C58476E616641596446674D494C786256486A5078587766314C44735752537044412F7A41394E763742414633516459304B4148394E75497A3858734E6B4177446A574E2F2F42357732595766442F772F46654768682F4D41712F6B452B4F776F443758467877634C436930304F4178703142696F702F762B462F784B63666E6833772F2F45424D4E32464D436F43674447682B4C412F57502F5073414541426C4B55384A63444143566D436E2F4F7A483972507A394667446E6D576A437768694E6573474C64313357414E7748706F584367356242423442776C51486C6F7A457A775474554570786870647A2F2F5030352F5031682F2F2F2B2F2F2F2B4F76384F6E486D7037664C382F5476382F6D76342F536F45414946754E384E6E436742617245795842384C45564A6F4441484F7751776344412B57774E2F383141434E7956734472775A475877337151422F2B4C586348436B4A2F466A4166437756393477635047777355427773476241536D3653576D4D3277414D4973314C774541764B7A722B2F474D367743762F2F30544A415168594E544C412F63482B506D51506E515446506639622F506C74443579597A73504377734D44794D5A5977734C4344414175456B504243336244715159414E424930663167464141376C4F6A6E4A41505633523848394F4551737751444B61564841774151417A7A4E4D4F497742742F3958775038362F2F316951544D704568433878564444596A6F7A547A4D75424E557145376559417844644556634642424D56465773634278446A30565038704D4551454C6B675767582B4D4E42452F696351454D506B562F7A644C76356C77436B4531424D6C315538454550395856394D4445313431594D4145455158785944795945524938477045443164784E38663445454F355262663047452F4E6B66564C2B4242426B5A2F37595530494143304D427851414932564D414141414141414141',FACETMP:'78415143414141424277414141414141414141414146704C526D6C594154464C464A7A6F4155514251314D672B6667582B47423267357A4D444C69642F495877412F694832432B465877575049783532686D7A4758736473412F704A734A6D5A5966596A4D326774324A7579634844343858427863446A78565657386353785254446D6F3238544E6B732B4849344F6A34696562452B61764F524F385A3368522B4767343154686750504D4E6F6858684865425634526538464F47444C414D6B54305448354D637178356350346B2F6E44666B492B36334D4C4F732F774433495838786679466D4D50476C647248304D7A77524F5134306B54597076516334413430487351537370714F6E346D657A4A2F6B6A39544E6C4962636C394976304A5079462F5154384B5046766C5138524A4A6D736D54534D764C537374433233624E39686C32453241626342644158784333774231532F6348396B76484436594C4A7030797677632F4B53644C43776C4C4A3464736A3177427A4948744957304432344F58512B66423171504867354A4C4C3759544E3438766961634669786848505A3438726A36554E492F2B47426F52342B464C59564F68577A4758754B50547035556A4534572B425A394D5469686631447338462F4956646857364135736C415141414151494442414144427755424156762F4367454E476639534241414947424959425149414251414942675141414155534251454542694D464141414D417741414467494143674D4141515143414151434130594142534A7A425145722F794943435135444B676B44425130754367514141414D4E5879634F4251514E58676F4E42415565445149424D4173474151344241414D4441674D424151414141514D6A41414967315149464E4E6B544141454D676A414D417749594F77734941514149426D4D7642774D4743516B504141455146684546414C51684251416F416751444141454942414D4142514D464C674542492F3843424469374C5145414457676E43775543446C59574451454245416F384F4149434351677043776741414430504141554742674141444159414167494641774941414145414157514141676E2F414145464241594141414D49426751424177514B426751414151734E2F326B414141554D426730414141514541776F414A515543416755414141414141514542414141414151414441414D45415141454A6C3842414141772F786F4B415141422F304D4741514542414145454141454141514141414141414141414141414141414141434141414241414941417745434251514C4941454447536B4441547A2F43514548465A59344367674A46785551425141414342564E4678454741424B39467763414333386841674559465145414377594342674143425163424151594241796342416857684277596B6768594241784F5548414543416946494641674141525554635451...
 	@RequestMapping(value = "/updateSingleEmpInfo",method=RequestMethod.POST)
 	public @ResponseBody Map<String, Object> updateSingleEmpInfo(HttpServletRequest request,
@@ -227,61 +432,16 @@ public class WebServiceController {
 		System.out.println(mac);
 		String jsonStr = downLoadStaffMessages(mac, STAFFSTATUS.WORKING.getValue());
 		return jsonStr;
-		
-		
-//		String jsonStr = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-//				+ "<exportdata>";
-//		try {
-//			List<Staff> staffs = staffService.findStaffAndMac(STAFFSTATUS.WORKING.getValue(), mac);
-//			
-//			if(CollectionUtils.isEmpty(staffs)){
-//				jsonStr += "</exportdata>";
-//				return jsonStr;
-//			}
-//			StringBuffer bf = new StringBuffer(jsonStr);
-//			for (Staff staff : staffs) {
-//				bf.append("<Staff MAC="+staff.getMac()+" ID="+staff.getStaffNo());
-//				bf.append(" NO="+staff.getStaffNo());
-//				bf.append(" NAME="+staff.getStaffName());
-//				bf.append(" FINGERTMP0="+staff.getFingerTemp0());
-//				bf.append(" FINGERTMP1="+staff.getFingerTemp1());
-//				bf.append(" FINGERTMP2="+staff.getFingerTemp2());
-//				bf.append(" FINGERTMP3="+staff.getFingerTemp3());
-//				bf.append(" FINGERTMP4="+staff.getFingerTemp4());
-//				bf.append(" FINGERTMP5="+staff.getFingerTemp5());
-//				bf.append(" FINGERTMP6="+staff.getFingerTemp6());
-//				bf.append(" FINGERTMP7="+staff.getFingerTemp7());
-//				bf.append(" FINGERTMP8="+staff.getFingerTemp8());
-//				bf.append(" FINGERTMP9="+staff.getFingerTemp9());
-//				bf.append(" FACETMP="+staff.getFaceTemp());
-//				jsonStr = bf.toString();
-//			}
-////		jsonStr = jsonStr+"<Staff  ID=\"99999\"  NO =\"99999\"  CARD=\"99919\"   NAME=\"测试下载1\"  FINGERTMP0=  FINGERTMP1=  FINGERTMP2=  FINGERTMP3= "
-////				+ "FINGERTMP4=  FINGERTMP5=  FINGERTMP6=  FINGERTMP7=  FINGERTMP8= FINGERTMP9=  FACETMP= />";
-////		jsonStr = jsonStr+"<Staff  ID=\"99929\"  NO =\"99929\"  CARD=\"99919\"   NAME=\"测试下载2\"  FINGERTMP0=  FINGERTMP1=  FINGERTMP2=  FINGERTMP3= "
-////				+ "FINGERTMP4=  FINGERTMP5=  FINGERTMP6=  FINGERTMP7=  FINGERTMP8= FINGERTMP9=  FACETMP= />";
-////		jsonStr = jsonStr+"<Staff  ID=\"99939\"  NO =\"99939\"  CARD=\"99919\"   NAME=\"测试下载3\"  FINGERTMP0=  FINGERTMP1=  FINGERTMP2=  FINGERTMP3= "
-////				+ "FINGERTMP4=  FINGERTMP5=  FINGERTMP6=  FINGERTMP7=  FINGERTMP8= FINGERTMP9=  FACETMP= />";
-////		jsonStr = jsonStr+"<Staff  ID=\"99949\"  NO =\"99949\"  CARD=\"99919\"   NAME=\"测试下载4\"  FINGERTMP0=  FINGERTMP1=  FINGERTMP2=  FINGERTMP3= "
-////				+ "FINGERTMP4=  FINGERTMP5=  FINGERTMP6=  FINGERTMP7=  FINGERTMP8= FINGERTMP9=  FACETMP= />";
-////		jsonStr = jsonStr+"<Staff  ID=\"99959\"  NO =\"99959\"  CARD=\"99919\"   NAME=\"测试下载5\"  FINGERTMP0=  FINGERTMP1=  FINGERTMP2=  FINGERTMP3= "
-////				+ "FINGERTMP4=  FINGERTMP5=  FINGERTMP6=  FINGERTMP7=  FINGERTMP8= FINGERTMP9=  FACETMP= />";
-//			
-//		} catch (Exception e) {
-//			logger.error("[downloadEmpInfo] 下载全部员工信息报错："+e); 
-//		}
-//		jsonStr += "</exportdata>";
-//		return jsonStr;
 	}
 
 		
 	@RequestMapping(value = "/downloadSingleEmpInfo",method=RequestMethod.POST)
 	public @ResponseBody String downloadSingleEmpInfo(HttpServletRequest request,
 			HttpServletResponse response,String no,String name) {
-		String mac = request.getParameter("Mac");
+		String mac = request.getParameter("mac");
 		System.out.println(mac);
-		System.out.println(no);
-		System.out.println(name);
+		if(StringUtils.isEmpty(no))no = null;
+		if(StringUtils.isEmpty(name))name = null;
 		String jsonStr = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 				+ "<exportdata>";
 		StringBuffer bf = new StringBuffer(jsonStr);
@@ -305,6 +465,7 @@ public class WebServiceController {
 			bf.append(" FINGERTMP8="+staff.getFingerTemp8());
 			bf.append(" FINGERTMP9="+staff.getFingerTemp9());
 			bf.append(" FACETMP="+staff.getFaceTemp());
+			bf.append(" />");
 		} catch (Exception e) {
 			logger.error("时间：{}[downloadSingleEmpInfo] 获取下载指定员工的信息报错"+e,new Date());
 		}
@@ -345,32 +506,50 @@ public class WebServiceController {
 				JSONObject jsonObj = arrays.getJSONObject(i);
 				if(null != jsonObj){
 					Staff staff = new Staff();
-					if(jsonObj.containsKey("ID")&&StringUtils.isEmpty(jsonObj.getString("ID")))staff.setStaffNo(jsonObj.getString("ID"));
-					if(jsonObj.containsKey("NAME")&&StringUtils.isEmpty(jsonObj.getString("NAME"))){
-						staff.setStaffNo(toStringHex(jsonObj.getString("NAME")));
+					if(jsonObj.containsKey("ID")&&!StringUtils.isEmpty(jsonObj.getString("ID")))staff.setStaffNo(jsonObj.getString("ID"));
+					if(jsonObj.containsKey("NAME")&&!StringUtils.isEmpty(jsonObj.getString("NAME"))){
+						staff.setStaffName(toStringHex(jsonObj.getString("NAME")));
 					}
 					/*
 					 * 这里需要将mac的数据缓存到map中
 					 * 程序加载开始缓存
 					 * 修改mac或者添加时更新缓存
 					 */
-					if(jsonObj.containsKey("MAC")&&StringUtils.isEmpty(jsonObj.getString("MAC"))){
-//					OrgMac mac = map.get(jsonObj.getString("MAC"));
-//					staff.setOrgId(mac.getOrgId());
-//					staff.setOrgName(mac.getOrgName());
+					if(jsonObj.containsKey("MAC")&&!StringUtils.isEmpty(jsonObj.getString("MAC"))){
+						OrgMac mac = orgMacService.findOrgMacByMac(jsonObj.getString("MAC"));
+//								map.get(jsonObj.getString("MAC"));
+						staff.setOrgId(mac.getOrgId());
+						staff.setOrgName(mac.getOrgName());
 					}
-					if(jsonObj.containsKey("FINGERTMP0")&&StringUtils.isEmpty(jsonObj.getString("FINGERTMP0")))staff.setFingerTemp0(jsonObj.getString("FINGERTMP0"));
-					if(jsonObj.containsKey("FINGERTMP1")&&StringUtils.isEmpty(jsonObj.getString("FINGERTMP1")))staff.setFingerTemp1(jsonObj.getString("FINGERTMP1"));
-					if(jsonObj.containsKey("FINGERTMP2")&&StringUtils.isEmpty(jsonObj.getString("FINGERTMP2")))staff.setFingerTemp2(jsonObj.getString("FINGERTMP2"));
-					if(jsonObj.containsKey("FINGERTMP3")&&StringUtils.isEmpty(jsonObj.getString("FINGERTMP3")))staff.setFingerTemp3(jsonObj.getString("FINGERTMP3"));
-					if(jsonObj.containsKey("FINGERTMP4")&&StringUtils.isEmpty(jsonObj.getString("FINGERTMP4")))staff.setFingerTemp4(jsonObj.getString("FINGERTMP4"));
-					if(jsonObj.containsKey("FINGERTMP5")&&StringUtils.isEmpty(jsonObj.getString("FINGERTMP5")))staff.setFingerTemp5(jsonObj.getString("FINGERTMP5"));
-					if(jsonObj.containsKey("FINGERTMP6")&&StringUtils.isEmpty(jsonObj.getString("FINGERTMP6")))staff.setFingerTemp6(jsonObj.getString("FINGERTMP6"));
-					if(jsonObj.containsKey("FINGERTMP7")&&StringUtils.isEmpty(jsonObj.getString("FINGERTMP7")))staff.setFingerTemp7(jsonObj.getString("FINGERTMP7"));
-					if(jsonObj.containsKey("FINGERTMP8")&&StringUtils.isEmpty(jsonObj.getString("FINGERTMP8")))staff.setFingerTemp8(jsonObj.getString("FINGERTMP8"));
-					if(jsonObj.containsKey("FINGERTMP9")&&StringUtils.isEmpty(jsonObj.getString("FINGERTMP9")))staff.setFingerTemp9(jsonObj.getString("FINGERTMP9"));
-					if(jsonObj.containsKey("FACETMP")&&StringUtils.isEmpty(jsonObj.getString("FACETMP")))staff.setFaceTemp(jsonObj.getString("FACETMP"));
-					int isSuccess = staffService.insert(staff);
+					if(jsonObj.containsKey("FINGERTMP0")&&!StringUtils.isEmpty(jsonObj.getString("FINGERTMP0")))staff.setFingerTemp0(jsonObj.getString("FINGERTMP0"));
+					if(jsonObj.containsKey("FINGERTMP1")&&!StringUtils.isEmpty(jsonObj.getString("FINGERTMP1")))staff.setFingerTemp1(jsonObj.getString("FINGERTMP1"));
+					if(jsonObj.containsKey("FINGERTMP2")&&!StringUtils.isEmpty(jsonObj.getString("FINGERTMP2")))staff.setFingerTemp2(jsonObj.getString("FINGERTMP2"));
+					if(jsonObj.containsKey("FINGERTMP3")&&!StringUtils.isEmpty(jsonObj.getString("FINGERTMP3")))staff.setFingerTemp3(jsonObj.getString("FINGERTMP3"));
+					if(jsonObj.containsKey("FINGERTMP4")&&!StringUtils.isEmpty(jsonObj.getString("FINGERTMP4")))staff.setFingerTemp4(jsonObj.getString("FINGERTMP4"));
+					if(jsonObj.containsKey("FINGERTMP5")&&!StringUtils.isEmpty(jsonObj.getString("FINGERTMP5")))staff.setFingerTemp5(jsonObj.getString("FINGERTMP5"));
+					if(jsonObj.containsKey("FINGERTMP6")&&!StringUtils.isEmpty(jsonObj.getString("FINGERTMP6")))staff.setFingerTemp6(jsonObj.getString("FINGERTMP6"));
+					if(jsonObj.containsKey("FINGERTMP7")&&!StringUtils.isEmpty(jsonObj.getString("FINGERTMP7")))staff.setFingerTemp7(jsonObj.getString("FINGERTMP7"));
+					if(jsonObj.containsKey("FINGERTMP8")&&!StringUtils.isEmpty(jsonObj.getString("FINGERTMP8")))staff.setFingerTemp8(jsonObj.getString("FINGERTMP8"));
+					if(jsonObj.containsKey("FINGERTMP9")&&!StringUtils.isEmpty(jsonObj.getString("FINGERTMP9")))staff.setFingerTemp9(jsonObj.getString("FINGERTMP9"));
+					if(jsonObj.containsKey("FACETMP")&&!StringUtils.isEmpty(jsonObj.getString("FACETMP")))staff.setFaceTemp(jsonObj.getString("FACETMP"));
+					staff.setStaffStatus(STAFFSTATUS.WORKING.getValue());
+					Staff st = staffService.findStaffAndMacByNoOrName(staff.getStaffNo(), staff.getStaffName(), jsonObj.getString("MAC"));
+					int isSuccess = 0;
+					if(null != st){
+						st.setFingerTemp0(jsonObj.getString("FINGERTMP0"));
+						st.setFingerTemp1(jsonObj.getString("FINGERTMP1"));
+						st.setFingerTemp2(jsonObj.getString("FINGERTMP2"));
+						st.setFingerTemp3(jsonObj.getString("FINGERTMP3"));
+						st.setFingerTemp4(jsonObj.getString("FINGERTMP4"));
+						st.setFingerTemp5(jsonObj.getString("FINGERTMP5"));
+						st.setFingerTemp6(jsonObj.getString("FINGERTMP6"));
+						st.setFingerTemp7(jsonObj.getString("FINGERTMP7"));
+						st.setFingerTemp8(jsonObj.getString("FINGERTMP8"));
+						st.setFingerTemp9(jsonObj.getString("FINGERTMP9"));
+						isSuccess = staffService.modify(st);
+					}else {
+						isSuccess = staffService.insert(staff);
+					}
 					if(isSuccess>0){
 						logger.error("时间：{}[uploadEmpInfo] 上传员工：{}，工号：{} 成功",new Date(),staff.getStaffName(),staff.getStaffNo());
 					}else{
@@ -414,6 +593,7 @@ public class WebServiceController {
 				bf.append(" FINGERTMP8="+staff.getFingerTemp8());
 				bf.append(" FINGERTMP9="+staff.getFingerTemp9());
 				bf.append(" FACETMP="+staff.getFaceTemp());
+				bf.append(" />");
 			}
 			jsonStr = bf.toString()+"</exportdata>";
 			System.out.println(jsonStr);
@@ -513,170 +693,4 @@ public class WebServiceController {
 		}
 		return s;
 	} 
-
-	
-//		try {
-//			List<Employee> list = new ArrayList<Employee>();
-//			Employee e = new Employee();
-//			 //String jsonstr="[{id:55,name:'张三',fingerTmp0:'adsfc',faceTmp:'asdf1234sdfdf'},{id:10,name:'张三',fingerTmp0:'adsfc',faceTmp:'asdf1234sdfdf'}]";
-//			JSONArray jsonArray = JSONArray.fromObject(empJson);
-//			int size = jsonArray.size();
-//			System.out.println("Size: " + size);
-//			for (int i = 0; i < size; i++) {
-//				e = new Employee();
-//				JSONObject jsonObject = jsonArray.getJSONObject(i);
-//				e.setId(jsonObject.get("ID").toString());
-////				e.setName(jsonObject.get("NAME").toString());
-//				 String strName=jsonObject.get("NAME").toString();
-//				 System.out.println("A:"+strName); 
-//			     strName=toStringHex(strName);
-//			     System.out.println("B:"+strName);  
-//				e.setName(strName);
-//
-////				if (null != jsonObject.get("name")) {
-////					byte[] newBytes = jsonObject.get("name").toString()
-////							.getBytes("8859_1");
-////					e.setName(new String(newBytes, "GB2312"));
-////
-////				}
-//				if (null != jsonObject.get("FINGERTMP0")) {
-//					e.setFingerTmp0(jsonObject.get("FINGERTMP0").toString());
-//				}
-//				if (null != jsonObject.get("FINGERTMP1")) {
-//					e.setFingerTmp1(jsonObject.get("FINGERTMP1").toString());
-//				}
-//				if (null != jsonObject.get("FINGERTMP2")) {
-//					e.setFingerTmp2(jsonObject.get("FINGERTMP2").toString());
-//				}
-//				if (null != jsonObject.get("FINGERTMP3")) {
-//					e.setFingerTmp3(jsonObject.get("FINGERTMP3").toString());
-//				}
-//				if (null != jsonObject.get("FINGERTMP4")) {
-//					e.setFingerTmp4(jsonObject.get("FINGERTMP4").toString());
-//				}
-//				if (null != jsonObject.get("FINGERTMP5")) {
-//					e.setFingerTmp5(jsonObject.get("FINGERTMP5").toString());
-//				}
-//				if (null != jsonObject.get("FINGERTMP6")) {
-//					e.setFingerTmp6(jsonObject.get("FINGERTMP6").toString());
-//				}
-//				if (null != jsonObject.get("FINGERTMP7")) {
-//					e.setFingerTmp7(jsonObject.get("FINGERTMP7").toString());
-//				}
-//				if (null != jsonObject.get("FINGERTMP8")) {
-//					e.setFingerTmp8(jsonObject.get("FINGERTMP8").toString());
-//				}
-//				if (null != jsonObject.get("FINGERTMP9")) {
-//					e.setFingerTmp9(jsonObject.get("FINGERTMP9").toString());
-//				}
-//				
-//				if (null != jsonObject.get("FACETMP")) {
-//					e.setFaceTmp(jsonObject.get("FACETMP").toString());
-//				}
-//				e.setStatus(1);
-//				System.out.println(empJson);
-//				// 保存集合中的所有信息到数据库
-//				list.add(e);
-//			}
-//			for (Employee e1 : list) {
-//				 Employee e2=this.employeeService.find("id", e1.getId());
-//							if (null != e2) {
-//								e1.setBranchId(e2.getBranchId());
-//								this.employeeService.update(e1);
-//							} else {
-//								e1.setBranchId("8888");
-//								this.employeeService.save(e1);
-//							}
-//
-//			}
-//			result.put(STATUS, SUCCESS);
-//			result.put(MESSAGE, "上传员工记录成功！");
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			result.put(STATUS, ERROR);
-//			result.put(MESSAGE, "上传员工记录失败！");
-//		}
-	
-//		try {
-//			List<Employee> list =employeeService.getAll();
-////			if(PERSONSTATE_NO.equals("0")){
-////			list = employeeService.getstauts("1");
-////			}
-////			if(PERSONSTATE_NO.equals("1")){
-////				list = employeeService.getstauts("0");
-////			}
-//			for (Employee employee : list) {
-//				jsonStr += "<Staff ";
-//				jsonStr += "ID=\"" + employee.getId() + "\" ";
-//				if (employee.getName() != null
-//						&& !employee.getName().equals("")) {
-//					jsonStr += "NAME=\"" + employee.getName() + "\" ";
-//				}
-//				if (employee.getFingerTmp0() != null
-//						&& !employee.getFingerTmp0().equals("")) {
-//					jsonStr += "FINGERTMP0=\"" + employee.getFingerTmp0()
-//							+ "\" ";
-//				}
-//				if (employee.getFingerTmp1() != null
-//						&& !employee.getFingerTmp1().equals("")) {
-//					jsonStr += "FINGERTMP1=\"" + employee.getFingerTmp1()
-//							+ "\" ";
-//				}
-//				if (employee.getFingerTmp2() != null
-//						&& !employee.getFingerTmp2().equals("")) {
-//					jsonStr += "FINGERTMP2=\"" + employee.getFingerTmp2()
-//							+ "\" ";
-//				}
-//				if (employee.getFingerTmp3() != null
-//						&& !employee.getFingerTmp3().equals("")) {
-//					jsonStr += "FINGERTMP3=\"" + employee.getFingerTmp3()
-//							+ "\" ";
-//				}
-//				if (employee.getFingerTmp4() != null
-//						&& !employee.getFingerTmp4().equals("")) {
-//					jsonStr += "FINGERTMP4=\"" + employee.getFingerTmp4()
-//							+ "\" ";
-//				}
-//				if (employee.getFingerTmp5() != null
-//						&& !employee.getFingerTmp5().equals("")) {
-//					jsonStr += "FINGERTMP5=\"" + employee.getFingerTmp5()
-//							+ "\" ";
-//				}
-//				if (employee.getFingerTmp6() != null
-//						&& !employee.getFingerTmp6().equals("")) {
-//					jsonStr += "FINGERTMP6=\"" + employee.getFingerTmp6()
-//							+ "\" ";
-//				}
-//				if (employee.getFingerTmp7() != null
-//						&& !employee.getFingerTmp7().equals("")) {
-//					jsonStr += "FINGERTMP7=\"" + employee.getFingerTmp7()
-//							+ "\" ";
-//				}
-//				if (employee.getFingerTmp8() != null
-//						&& !employee.getFingerTmp8().equals("")) {
-//					jsonStr += "FINGERTMP8=\"" + employee.getFingerTmp8()
-//							+ "\" ";
-//				}
-//				if (employee.getFingerTmp9() != null
-//						&& !employee.getFingerTmp9().equals("")) {
-//					jsonStr += "FINGERTMP9=\"" + employee.getFingerTmp9()
-//							+ "\" ";
-//				}
-//				if (employee.getFaceTmp() != null
-//						&& !employee.getFaceTmp().equals("")) {
-//					jsonStr += "FACETMP=\"" + employee.getFaceTmp() + "\" ";
-//				}
-//				jsonStr += "/>";
-//
-//			}
-//			jsonStr += "</exportdata>";
-//			jsonStr = jsonStr.replaceAll("null", "");
-//			System.out.println(jsonStr);
-//			result.put(STATUS, jsonStr);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			result.put(STATUS, ERROR);
-//			result.put(MESSAGE, "下载员工信息失败！");
-//		}
-	
 }

@@ -24,7 +24,7 @@
 			<ul class="nav ace-nav">
 				<li class="light-blue">
 					<a data-toggle="dropdown" href="#" class="dropdown-toggle"> 
-					<img class="nav-user-photo" src="/public/images/index.png" alt="Jason's Photo" /> 
+					<img class="nav-user-photo" src="../public/images/index.png" alt="Jason's Photo" /> 
 					<span class="user-info"> <small>您好</small> ${user.realName} </span> <i class="icon-caret-down"></i>
 				</a>
 				<ul

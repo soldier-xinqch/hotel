@@ -16,35 +16,34 @@
     	            }
     	        };
     	var colModel = [
-    	                { title: "员工姓名",dataIndx:"menuIndex", width: '5%', dataType: "Integer", align: "center",
+    	                { title: "员工姓名",dataIndx:"staff_name", width: '5%', dataType: "Integer", align: "center",
     	                	filter: { type: 'textbox', condition: 'begin', listeners: ['change'] }
     	                },
-    	        		{ title: "所属部门",dataIndx:"menuName", width: '5%', dataType: "string", align: "center",
+    	        		{ title: "所属部门",dataIndx:"org_name", width: '6%', dataType: "string", align: "center",
     	        			filter: { type: 'textbox', condition: 'begin', listeners: ['change'] }
     	                },
-    	        		{ title: "平常加班",dataIndx:"menuUrl", width: '5%', dataType: "string", align: "center" },
-    	        		{ title: "假日加班",dataIndx:"menuUrl", width: '5%', dataType: "string", align: "center" },
-    	        		{ title: "节日加班",dataIndx:"menuUrl", width: '5%', dataType: "string", align: "center" },
-    	        		{ title: "迟到",dataIndx:"menuUrl", width: '2%', dataType: "string", align: "center" },
-    	        		{ title: "早退",dataIndx:"menuUrl", width: '2%', dataType: "string", align: "center" },
-    	        		{ title: "倒休",dataIndx:"menuUrl", width: '2%', dataType: "string", align: "center" },
-    	        		{ title: "年假",dataIndx:"menuUrl", width: '2%', dataType: "string", align: "center" },
-    	        		{ title: "事假",dataIndx:"menuUrl", width: '2%', dataType: "string", align: "center" },
-    	        		{ title: "病假",dataIndx:"menuUrl", width: '2%', dataType: "string", align: "center" },
-    	        		{ title: "探亲假",dataIndx:"menuUrl", width: '4%', dataType: "string", align: "center" },
-    	        		{ title: "工伤假",dataIndx:"menuUrl", width: '4%', dataType: "string", align: "center" },
-    	        		{ title: "产假",dataIndx:"menuUrl", width: '2%', dataType: "string", align: "center" },
-    	        		{ title: "婚假",dataIndx:"menuUrl", width: '2%', dataType: "string", align: "center" },
-    	        		{ title: "丧假",dataIndx:"menuUrl", width: '2%', dataType: "string", align: "center" },
-    	        		{ title: "旷工",dataIndx:"menuUrl", width: '2%', dataType: "string", align: "center" },
-    	        		{ title: "法定节日",dataIndx:"menuUrl", width: '5%', dataType: "string", align: "center" },
-    	        		{ title: "公出",dataIndx:"menuUrl", width: '2%', dataType: "string", align: "center" },
-    	        		{ title: "应上工时",dataIndx:"menuUrl", width: '5%', dataType: "string", align: "center" },
-    	        		{ title: "实上工时",dataIndx:"menuUrl", width: '5%', dataType: "string", align: "center" },
-    	        		{ title: "应上天数",dataIndx:"menuUrl", width: '5%', dataType: "string", align: "center" },
-    	        		{ title: "实上天数",dataIndx:"menuUrl", width: '5%', dataType: "string", align: "center" },
-    	        		{ title: "存休",dataIndx:"menuUrl", width: '4%', dataType: "string", align: "center" },
-    	        		{ title: "年假",dataIndx:"menuStatus", width: '4%', dataType: "string", align: "center"}
+    	        		{ title: "平常加班",dataIndx:"a_rest", width: '5%', dataType: "string", align: "center" },
+    	        		{ title: "假日加班",dataIndx:"b_rest", width: '5%', dataType: "string", align: "center" },
+    	        		{ title: "节日加班",dataIndx:"c_rest", width: '5%', dataType: "string", align: "center" },
+    	        		{ title: "迟到",dataIndx:"b_rest", width: '2%', dataType: "string", align: "center" },
+    	        		{ title: "早退",dataIndx:"e_rest", width: '2%', dataType: "string", align: "center" },
+    	        		{ title: "倒休",dataIndx:"f_rest", width: '2%', dataType: "string", align: "center" },
+    	        		{ title: "年假",dataIndx:"year_day", width: '2%', dataType: "string", align: "center" },
+    	        		{ title: "事假",dataIndx:"g_rest", width: '2%', dataType: "string", align: "center" },
+    	        		{ title: "病假",dataIndx:"h_rest", width: '2%', dataType: "string", align: "center" },
+    	        		{ title: "探亲假",dataIndx:"i_rest", width: '4%', dataType: "string", align: "center" },
+    	        		{ title: "工伤假",dataIndx:"j_rest", width: '4%', dataType: "string", align: "center" },
+    	        		{ title: "产假",dataIndx:"k_rest", width: '2%', dataType: "string", align: "center" },
+    	        		{ title: "婚假",dataIndx:"l_rest", width: '2%', dataType: "string", align: "center" },
+    	        		{ title: "丧假",dataIndx:"m_rest", width: '2%', dataType: "string", align: "center" },
+    	        		{ title: "旷工",dataIndx:"n_rest", width: '2%', dataType: "string", align: "center" },
+    	        		{ title: "法定节日",dataIndx:"o_rest", width: '5%', dataType: "string", align: "center" },
+    	        		{ title: "公出",dataIndx:"p_rest", width: '2%', dataType: "string", align: "center" },
+    	        		{ title: "应上工时",dataIndx:"q_rest", width: '5%', dataType: "string", align: "center" },
+    	        		{ title: "实上工时",dataIndx:"r_rest", width: '5%', dataType: "string", align: "center" },
+    	        		{ title: "应上天数",dataIndx:"s_rest", width: '5%', dataType: "string", align: "center" },
+    	        		{ title: "实上天数",dataIndx:"t_rest", width: '5%', dataType: "string", align: "center" },
+    	        		{ title: "存休",dataIndx:"keep_day", width: '5%', dataType: "string", align: "center" }
     	        	];
     	var tab_toolbar = {
                 items: [
@@ -63,7 +62,7 @@
                         label: "导出",
                         cls:'btn btn-sm',
                         listeners: [{"click": function (evt) {
-                        	 window.open("exportWorkType");
+                        	tab_export();
                             }
                         }]
                     }
@@ -115,5 +114,39 @@
             var val = $(this).val();
             $grid.css('margin', val).pqGrid('refresh');
         });
+        function tab_export() {
+          	var delMsg = '<div class="dialog-cls"><form id="export_from" class="form-horizontal" role="form">'+$("#attendanceSearch_export_dialog").html()+'</form></div>';
+          	bootbox.dialog({
+          		  message: delMsg,
+          		  title: "导出列表",
+          		  buttons: {
+          		    success: {
+          		      label: "导出",
+          		      className: "btn btn-sm btn-success",
+          		      callback: function() {
+          		    	  window.open("exportExcel?"+$("#export_from").serialize());
+          		      }
+          		    },
+          		    canle:{
+     	            	 label: "取消",
+     	                 className: "btn btn-sm btn-grey",
+     	                 callback: function () {
+     	                 }
+          		    }
+          		  }
+          		});
+          	$('#export_from .row').find(" .form-group div").find("select").pqSelect({ 
+          		selectallText:'全选',
+	    		checkbox: true,
+	    		width:'270px'
+	    	});
+          	$('.datepicker').datetimepicker({
+    			language: 'zh-CN',
+    			format: 'yyyy-mm-dd hh:ii:ss',
+    	        autoclose: true,
+    	        todayBtn: true,
+    	        pickerPosition: "bottom-left"
+            });
+          }
     });    
     

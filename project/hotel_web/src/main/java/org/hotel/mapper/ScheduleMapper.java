@@ -5,18 +5,25 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import org.hotel.model.Org;
 import org.hotel.model.Schedule;
+import org.hotel.model.ScheduleWithBLOBs;
 
 public interface ScheduleMapper {
     int deleteByPrimaryKey(String id);
 
-    int insertSelective(Schedule record);
+    int insert(ScheduleWithBLOBs record);
 
-    Schedule selectByPrimaryKey(String id);
+    int insertSelective(ScheduleWithBLOBs record);
 
-    int updateByPrimaryKeySelective(Schedule record);
+    ScheduleWithBLOBs selectByPrimaryKey(String id);
 
-	List<Schedule> findAll();
+    int updateByPrimaryKeySelective(ScheduleWithBLOBs record);
 
-	List<Schedule> findScheduleByOrgs(@Param("orgs") List<Org> orgs);
+    int updateByPrimaryKeyWithBLOBs(ScheduleWithBLOBs record);
+
+    int updateByPrimaryKey(Schedule record);
+    
+    List<ScheduleWithBLOBs> findAll();
+
+	List<ScheduleWithBLOBs> findScheduleByOrgs(@Param("orgs") List<Org> orgs); 
 
 }

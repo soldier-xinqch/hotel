@@ -58,5 +58,10 @@ public class AttendanceRecordServiceImpl implements IAttendanceRecordService{
 	public List<AttendanceRecord> findAttendanceRecordByOrgs(List<Org> orgs) {
 		return attendanceRecordMapper.findAttendanceRecordByOrgs(orgs);
 	}
+
+	@Override
+	public List<AttendanceRecord> findAttendanceRecordByLikes(List<Org> orgs, String[] staffId) {
+		return attendanceRecordMapper.findAttendanceRecordByLikes(orgs,staffId);
+	}
 	
 }

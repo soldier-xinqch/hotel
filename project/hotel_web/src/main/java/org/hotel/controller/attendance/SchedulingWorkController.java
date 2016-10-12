@@ -7,11 +7,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
-import org.hotel.common.BaseController;
 import org.hotel.common.CommEnum.RESULTFLAG;
 import org.hotel.common.CommEnum.STAFFSTATUS;
 import org.hotel.model.Org;
-import org.hotel.model.Schedule;
+import org.hotel.model.ScheduleWithBLOBs;
 import org.hotel.model.Staff;
 import org.hotel.model.User;
 import org.hotel.model.WorkOrder;
@@ -33,11 +32,11 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
 @Controller
-@RequestMapping("schedulingWork")
-public class SchedulingWorkController extends BaseController<Schedule>{
+@RequestMapping("scheduleWork")
+public class SchedulingWorkController {
 
 	
-	private final String urlStr = "schedulingWork";
+	private final String urlStr = "scheduleWork";
 	
 	@Autowired
 	private IOrgService orgService;
@@ -81,14 +80,14 @@ public class SchedulingWorkController extends BaseController<Schedule>{
 	@RequestMapping(value="/pageData",method=RequestMethod.GET)
 	public @ResponseBody Map<String, Object> pageDatas(HttpServletRequest request){
 		Map<String,Object> map = Maps.newHashMap();
-		List<Schedule> schedules = scheduleService.findScheduleByOrgs(orgs);
+		List<ScheduleWithBLOBs> schedules = scheduleService.findScheduleByOrgs(orgs);
 		map.put("list", schedules);
 		map.put("type", schedules.size()>0 ?RESULTFLAG.SUCCESS.getValue():RESULTFLAG.ERROR.getValue());
 		return map;
 	}
 	
 	@RequestMapping(value="addSchedule",method=RequestMethod.POST)
-	public @ResponseBody Map<String,Object> addOrg(HttpServletRequest request,Schedule schedule){
+	public @ResponseBody Map<String,Object> addOrg(HttpServletRequest request,ScheduleWithBLOBs schedule){
 		Map<String,Object> map = Maps.newHashMap();
 		dealScheduleMsg(schedule);
 		schedule.setCreateUser(user.getId());
@@ -96,24 +95,21 @@ public class SchedulingWorkController extends BaseController<Schedule>{
 		map.put("type", isSuccess>0 ?RESULTFLAG.SUCCESS.getValue():RESULTFLAG.ERROR.getValue());
 		return map;
 	}
-	private Schedule dealScheduleMsg(Schedule schedule){
+	private ScheduleWithBLOBs dealScheduleMsg(ScheduleWithBLOBs schedule){
 		String orgId = schedule.getOrgId();
 		if(!StringUtils.isEmpty(orgId)){
 			String[] idAndName = orgId.split("-");
 			schedule.setOrgId(idAndName[0]);
 			schedule.setOrgName(idAndName[1]);
-		}
-		String userId = schedule.getUserId();
-		if(!StringUtils.isEmpty(userId)){
-			String[] idAndName = userId.split("-");
-			schedule.setUserId(idAndName[0]);
-			schedule.setUserName(idAndName[1]);
+		}else{
+			schedule.setOrgId(user.getOrgId());
+			schedule.setOrgName(user.getOrgName());
 		}
 		return schedule;
 	}
 	
 	@RequestMapping(value="modifySchedule",method=RequestMethod.POST)
-	public  @ResponseBody Map<String,Object> modifyOrg(HttpServletRequest request,Schedule schedule){
+	public  @ResponseBody Map<String,Object> modifyOrg(HttpServletRequest request,ScheduleWithBLOBs schedule){
 		Map<String,Object> map = Maps.newHashMap();
 		dealScheduleMsg(schedule);
 		schedule.setModifyUser(user.getId());

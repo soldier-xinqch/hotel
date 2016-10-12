@@ -106,7 +106,33 @@ tr.pq-row-delete td
 						<div class="row">
 							<div class="col-xs-12">
 								<!-- PAGE CONTENT BEGINS -->
-								<div id="workOrder_grid"></div>
+								<div class="col-lg-2">
+									<div class="panel panel-default">
+									   <div class="panel-heading">
+									          部门结构
+									   </div>
+									   <div class="panel-body">
+									     <ul id="zTree" class="ztree" ></ul>
+									   </div>
+									</div>
+									
+								</div>
+								<div class='col-lg-10'>
+									<div class="searchDiv">
+										<form class="form-inline">
+										  <div class="form-group">
+										    <label for="exampleInputName2">班次编号</label>
+										    <input type="text" class="form-control" id="exampleInputName2" placeholder="请输入员工姓名">
+										  </div>
+										   <div class="form-group">
+										    <label for="exampleInputEmail2">班次类型</label>
+										    <input type="email" class="form-control" id="exampleInputEmail2" placeholder="请输入员工的电话号">
+										  </div>
+										  <button type="submit" class="btn btn-sm btn-primary">查询</button>
+										</form>
+									</div>
+									 <div id="workOrder_grid"></div>
+								</div>
 								<!-- PAGE CONTENT ENDS -->
 							</div><!-- /.col -->
 						</div><!-- /.row -->
@@ -119,7 +145,8 @@ tr.pq-row-delete td
 		</div><!-- /.main-container -->
 		
 <!--  dialog  -->
-<div id="menu_add" class="dialog-model"><%@ include file="workOrder_dialog.jsp"%></div>
+<div id="workOrder_dialog" class="dialog-model"><%@ include file="workOrder_dialog.jsp"%></div>
+<div id="workOrder_export_dialog" class="dialog-model"><%@ include file="workOrder_export_dialog.jsp"%></div>
 		<script type="text/javascript">
 			<%@ include file="workOrder.js"%>
 		</script>

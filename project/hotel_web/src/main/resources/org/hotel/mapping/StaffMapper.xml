@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.hotel.mapper.StaffMapper">
-
-	<cache type="org.mybatis.caches.ehcache.LoggingEhcache"> 
+<cache type="org.mybatis.caches.ehcache.LoggingEhcache"> 
     <property name="timeToIdleSeconds" value="3600" /><!--1 hour-->
     <property name="timeToLiveSeconds" value="3600" /><!--1 hour-->
     <property name="maxEntriesLocalHeap" value="1000" />
@@ -38,23 +37,23 @@
     <result column="quit_desc" jdbcType="VARCHAR" property="quitDesc" />
     <result column="quit_memo" jdbcType="VARCHAR" property="quitMemo" />
     <result column="orther_memo" jdbcType="VARCHAR" property="ortherMemo" />
-    <result column="face_temp" jdbcType="LONGVARCHAR" property="faceTemp" />
-    <result column="finger_temp1" jdbcType="LONGVARCHAR" property="fingerTemp1" />
-    <result column="finger_temp2" jdbcType="LONGVARCHAR" property="fingerTemp2" />
-    <result column="finger_temp3" jdbcType="LONGVARCHAR" property="fingerTemp3" />
-    <result column="finger_temp4" jdbcType="LONGVARCHAR" property="fingerTemp4" />
-    <result column="finger_temp5" jdbcType="LONGVARCHAR" property="fingerTemp5" />
-    <result column="finger_temp6" jdbcType="LONGVARCHAR" property="fingerTemp6" />
-    <result column="finger_temp7" jdbcType="LONGVARCHAR" property="fingerTemp7" />
-    <result column="finger_temp8" jdbcType="LONGVARCHAR" property="fingerTemp8" />
-    <result column="finger_temp9" jdbcType="LONGVARCHAR" property="fingerTemp9" />
-    <result column="finger_temp0" jdbcType="LONGVARCHAR" property="fingerTemp0" />
+     <result column="face_temp" jdbcType="LONGVARBINARY" property="faceTemp" />
+    <result column="finger_temp1" jdbcType="LONGVARBINARY" property="fingerTemp1" />
+    <result column="finger_temp2" jdbcType="LONGVARBINARY" property="fingerTemp2" />
+    <result column="finger_temp3" jdbcType="LONGVARBINARY" property="fingerTemp3" />
+    <result column="finger_temp4" jdbcType="LONGVARBINARY" property="fingerTemp4" />
+    <result column="finger_temp5" jdbcType="LONGVARBINARY" property="fingerTemp5" />
+    <result column="finger_temp6" jdbcType="LONGVARBINARY" property="fingerTemp6" />
+    <result column="finger_temp7" jdbcType="LONGVARBINARY" property="fingerTemp7" />
+    <result column="finger_temp8" jdbcType="LONGVARBINARY" property="fingerTemp8" />
+    <result column="finger_temp9" jdbcType="LONGVARBINARY" property="fingerTemp9" />
+    <result column="finger_temp0" jdbcType="LONGVARBINARY" property="fingerTemp0" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, staff_no, staff_name, org_id, org_name, parent_id, sex, card_id, staff_card_no, 
-    into_time, telphone, staff_address, email, birthday, year_rest_day, keep_rest_day, 
-    create_user, create_time, modify_user, modify_time, del_flag, staff_status, quit_time, 
-    quit_check_id, quit_check_name, quit_desc, quit_memo, orther_memo
+    staff.id, staff.staff_no, staff.staff_name, staff.org_id, staff.org_name, staff.parent_id, staff.sex, staff.card_id, staff.staff_card_no, 
+    staff.into_time, staff.telphone, staff.staff_address, staff.email, staff.birthday, staff.year_rest_day, staff.keep_rest_day, 
+    staff.create_user, staff.create_time, staff.modify_user, staff.modify_time, staff.del_flag, staff.staff_status, staff.quit_time, 
+   staff.quit_check_id, staff.quit_check_name, staff.quit_desc, staff.quit_memo, staff.orther_memo
   </sql>
   <sql id="Blob_Column_List">
     face_temp, finger_temp1, finger_temp2, finger_temp3, finger_temp4, finger_temp5, 
@@ -96,10 +95,10 @@
       #{modifyUser,jdbcType=VARCHAR}, #{modifyTime,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=TINYINT}, 
       #{staffStatus,jdbcType=VARCHAR}, #{quitTime,jdbcType=TIMESTAMP}, #{quitCheckId,jdbcType=VARCHAR}, 
       #{quitCheckName,jdbcType=VARCHAR}, #{quitDesc,jdbcType=VARCHAR}, #{quitMemo,jdbcType=VARCHAR}, 
-      #{ortherMemo,jdbcType=VARCHAR}, #{faceTemp,jdbcType=LONGVARCHAR}, #{fingerTemp1,jdbcType=LONGVARCHAR}, 
-      #{fingerTemp2,jdbcType=LONGVARCHAR}, #{fingerTemp3,jdbcType=LONGVARCHAR}, #{fingerTemp4,jdbcType=LONGVARCHAR}, 
-      #{fingerTemp5,jdbcType=LONGVARCHAR}, #{fingerTemp6,jdbcType=LONGVARCHAR}, #{fingerTemp7,jdbcType=LONGVARCHAR}, 
-      #{fingerTemp8,jdbcType=LONGVARCHAR}, #{fingerTemp9,jdbcType=LONGVARCHAR}, #{fingerTemp0,jdbcType=LONGVARCHAR}
+      #{ortherMemo,jdbcType=VARCHAR}, #{faceTemp,jdbcType=LONGVARBINARY}, #{fingerTemp1,jdbcType=LONGVARBINARY}, 
+      #{fingerTemp2,jdbcType=LONGVARBINARY}, #{fingerTemp3,jdbcType=LONGVARBINARY}, #{fingerTemp4,jdbcType=LONGVARBINARY}, 
+      #{fingerTemp5,jdbcType=LONGVARBINARY}, #{fingerTemp6,jdbcType=LONGVARBINARY}, #{fingerTemp7,jdbcType=LONGVARBINARY}, 
+      #{fingerTemp8,jdbcType=LONGVARBINARY}, #{fingerTemp9,jdbcType=LONGVARBINARY}, #{fingerTemp0,jdbcType=LONGVARBINARY}
       )
   </insert>
   <insert id="insertSelective" parameterType="org.hotel.model.Staff">
@@ -309,37 +308,37 @@
         #{ortherMemo,jdbcType=VARCHAR},
       </if>
       <if test="faceTemp != null">
-        #{faceTemp,jdbcType=LONGVARCHAR},
+        #{faceTemp,jdbcType=LONGVARBINARY},
       </if>
       <if test="fingerTemp1 != null">
-        #{fingerTemp1,jdbcType=LONGVARCHAR},
+        #{fingerTemp1,jdbcType=LONGVARBINARY},
       </if>
       <if test="fingerTemp2 != null">
-        #{fingerTemp2,jdbcType=LONGVARCHAR},
+        #{fingerTemp2,jdbcType=LONGVARBINARY},
       </if>
       <if test="fingerTemp3 != null">
-        #{fingerTemp3,jdbcType=LONGVARCHAR},
+        #{fingerTemp3,jdbcType=LONGVARBINARY},
       </if>
       <if test="fingerTemp4 != null">
-        #{fingerTemp4,jdbcType=LONGVARCHAR},
+        #{fingerTemp4,jdbcType=LONGVARBINARY},
       </if>
       <if test="fingerTemp5 != null">
-        #{fingerTemp5,jdbcType=LONGVARCHAR},
+        #{fingerTemp5,jdbcType=LONGVARBINARY},
       </if>
       <if test="fingerTemp6 != null">
-        #{fingerTemp6,jdbcType=LONGVARCHAR},
+        #{fingerTemp6,jdbcType=LONGVARBINARY},
       </if>
       <if test="fingerTemp7 != null">
-        #{fingerTemp7,jdbcType=LONGVARCHAR},
+        #{fingerTemp7,jdbcType=LONGVARBINARY},
       </if>
       <if test="fingerTemp8 != null">
-        #{fingerTemp8,jdbcType=LONGVARCHAR},
+        #{fingerTemp8,jdbcType=LONGVARBINARY},
       </if>
       <if test="fingerTemp9 != null">
-        #{fingerTemp9,jdbcType=LONGVARCHAR},
+        #{fingerTemp9,jdbcType=LONGVARBINARY},
       </if>
       <if test="fingerTemp0 != null">
-        #{fingerTemp0,jdbcType=LONGVARCHAR},
+        #{fingerTemp0,jdbcType=LONGVARBINARY},
       </if>
     </trim>
   </insert>
@@ -428,37 +427,37 @@
         orther_memo = #{ortherMemo,jdbcType=VARCHAR},
       </if>
       <if test="faceTemp != null">
-        face_temp = #{faceTemp,jdbcType=LONGVARCHAR},
+        face_temp = #{faceTemp,jdbcType=LONGVARBINARY},
       </if>
       <if test="fingerTemp1 != null">
-        finger_temp1 = #{fingerTemp1,jdbcType=LONGVARCHAR},
+        finger_temp1 = #{fingerTemp1,jdbcType=LONGVARBINARY},
       </if>
       <if test="fingerTemp2 != null">
-        finger_temp2 = #{fingerTemp2,jdbcType=LONGVARCHAR},
+        finger_temp2 = #{fingerTemp2,jdbcType=LONGVARBINARY},
       </if>
       <if test="fingerTemp3 != null">
-        finger_temp3 = #{fingerTemp3,jdbcType=LONGVARCHAR},
+        finger_temp3 = #{fingerTemp3,jdbcType=LONGVARBINARY},
       </if>
       <if test="fingerTemp4 != null">
-        finger_temp4 = #{fingerTemp4,jdbcType=LONGVARCHAR},
+        finger_temp4 = #{fingerTemp4,jdbcType=LONGVARBINARY},
       </if>
       <if test="fingerTemp5 != null">
-        finger_temp5 = #{fingerTemp5,jdbcType=LONGVARCHAR},
+        finger_temp5 = #{fingerTemp5,jdbcType=LONGVARBINARY},
       </if>
       <if test="fingerTemp6 != null">
-        finger_temp6 = #{fingerTemp6,jdbcType=LONGVARCHAR},
+        finger_temp6 = #{fingerTemp6,jdbcType=LONGVARBINARY},
       </if>
       <if test="fingerTemp7 != null">
-        finger_temp7 = #{fingerTemp7,jdbcType=LONGVARCHAR},
+        finger_temp7 = #{fingerTemp7,jdbcType=LONGVARBINARY},
       </if>
       <if test="fingerTemp8 != null">
-        finger_temp8 = #{fingerTemp8,jdbcType=LONGVARCHAR},
+        finger_temp8 = #{fingerTemp8,jdbcType=LONGVARBINARY},
       </if>
       <if test="fingerTemp9 != null">
-        finger_temp9 = #{fingerTemp9,jdbcType=LONGVARCHAR},
+        finger_temp9 = #{fingerTemp9,jdbcType=LONGVARBINARY},
       </if>
       <if test="fingerTemp0 != null">
-        finger_temp0 = #{fingerTemp0,jdbcType=LONGVARCHAR},
+        finger_temp0 = #{fingerTemp0,jdbcType=LONGVARBINARY},
       </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
@@ -492,17 +491,17 @@
       quit_desc = #{quitDesc,jdbcType=VARCHAR},
       quit_memo = #{quitMemo,jdbcType=VARCHAR},
       orther_memo = #{ortherMemo,jdbcType=VARCHAR},
-      face_temp = #{faceTemp,jdbcType=LONGVARCHAR},
-      finger_temp1 = #{fingerTemp1,jdbcType=LONGVARCHAR},
-      finger_temp2 = #{fingerTemp2,jdbcType=LONGVARCHAR},
-      finger_temp3 = #{fingerTemp3,jdbcType=LONGVARCHAR},
-      finger_temp4 = #{fingerTemp4,jdbcType=LONGVARCHAR},
-      finger_temp5 = #{fingerTemp5,jdbcType=LONGVARCHAR},
-      finger_temp6 = #{fingerTemp6,jdbcType=LONGVARCHAR},
-      finger_temp7 = #{fingerTemp7,jdbcType=LONGVARCHAR},
-      finger_temp8 = #{fingerTemp8,jdbcType=LONGVARCHAR},
-      finger_temp9 = #{fingerTemp9,jdbcType=LONGVARCHAR},
-      finger_temp0 = #{fingerTemp0,jdbcType=LONGVARCHAR}
+      face_temp = #{faceTemp,jdbcType=LONGVARBINARY},
+      finger_temp1 = #{fingerTemp1,jdbcType=LONGVARBINARY},
+      finger_temp2 = #{fingerTemp2,jdbcType=LONGVARBINARY},
+      finger_temp3 = #{fingerTemp3,jdbcType=LONGVARBINARY},
+      finger_temp4 = #{fingerTemp4,jdbcType=LONGVARBINARY},
+      finger_temp5 = #{fingerTemp5,jdbcType=LONGVARBINARY},
+      finger_temp6 = #{fingerTemp6,jdbcType=LONGVARBINARY},
+      finger_temp7 = #{fingerTemp7,jdbcType=LONGVARBINARY},
+      finger_temp8 = #{fingerTemp8,jdbcType=LONGVARBINARY},
+      finger_temp9 = #{fingerTemp9,jdbcType=LONGVARBINARY},
+      finger_temp0 = #{fingerTemp0,jdbcType=LONGVARBINARY}
     where id = #{id,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="org.hotel.model.Staff">
@@ -536,6 +535,7 @@
       orther_memo = #{ortherMemo,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
+
 	
  <select id="findAll" resultMap="BaseResultMap">
     select 
@@ -588,11 +588,48 @@
     <if test="null != no">
     	and staff.staff_no = #{no,jdbcType=VARCHAR}
     </if>
-    <if test="null != name">
+    <if test="null != name and ''!=name">
     	and staff.staff_name = #{name,jdbcType=VARCHAR}
     </if>
     <if test="null != mac">
     	and org_mac.mac = #{mac,jdbcType=VARCHAR}
+    </if>
+  </select>
+  
+   <select id="findStaffByLikes" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from staff
+    where staff.del_flag=0
+    <if test="null != orgIds and orgIds.size>0">
+    	 and org_id in 
+	    <foreach close=")" collection="orgIds" index="" item="item" open="(" separator=",">  
+	     	 #{item.id, jdbcType=VARCHAR}  
+	    </foreach> 
+    </if>
+    <if test="null != staffId and staffId.length>0">
+    	 and id in 
+	    <foreach close=")" collection="staffId" index="" item="item" open="(" separator=",">  
+	     	 #{item, jdbcType=VARCHAR}  
+	    </foreach> 
+    </if>
+    <if test="null !=startTime and null == endTime and 'WORKING'==status">
+    	and into_time <![CDATA[ >= ]]> #{startTime}
+    </if>
+    <if test="null ==startTime and null != endTime and 'WORKING'==status">
+    	and into_time <![CDATA[ <= ]]> #{endTime}
+    </if>
+    <if test="null !=startTime and ''!= endTime and 'WORKING'==status">
+    	and into_time between #{startTime} and #{endTime}
+    </if>
+    <if test="null !=startTime and null == endTime and 'QUITED'==status">
+    	and quit_time <![CDATA[ >= ]]> #{startTime}
+    </if>
+    <if test="null ==startTime and null != endTime and 'QUITED'==status">
+    	and quit_time <![CDATA[ <= ]]> #{endTime}
+    </if>
+    <if test="null !=startTime and ''!= endTime and 'QUITED'==status">
+    	and quit_time between #{startTime} and #{endTime}
     </if>
   </select>
 </mapper>

@@ -3,7 +3,7 @@
 
 <div class="row">
 	<div class="form-group">
- 		<label class="col-sm-3 control-label">用户名称</label>
+ 		<label class="col-sm-3 control-label">用户名</label>
        	<div class="col-sm-9">
        		<input type="text" class="form-control input-xlarge" name="username"  value="">
        	</div>

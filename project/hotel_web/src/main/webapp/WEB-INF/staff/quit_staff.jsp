@@ -31,7 +31,7 @@ div.pq-grid-toolbar-crud
 }
 div.pq-grid *
 {
-    font-size:14px;    
+    font-size:12px;    
 }
 tr.pq-grid-row td
 {
@@ -106,7 +106,41 @@ tr.pq-row-delete td
 						<div class="row">
 							<div class="col-xs-12">
 								<!-- PAGE CONTENT BEGINS -->
-								<div id="quit_staff_grid"></div>
+								<div class="col-lg-2">
+									<div class="panel panel-default">
+									   <div class="panel-heading">
+									          部门结构
+									   </div>
+									   <div class="panel-body">
+									     <ul id="zTree" class="ztree" ></ul>
+									   </div>
+									</div>
+									
+								</div>
+								<div class='col-lg-10'>
+									<div class="searchDiv">
+										<form class="form-inline">
+										  <div class="form-group">
+										    <label for="exampleInputName2">姓名</label>
+										    <input type="text" class="form-control" id="exampleInputName2" placeholder="请输入员工姓名">
+										  </div>
+										   <div class="form-group">
+										    <label for="exampleInputEmail2">电话</label>
+										    <input type="email" class="form-control" id="exampleInputEmail2" placeholder="请输入员工的电话号">
+										  </div>
+										  <div class="form-group">
+										    <label for="exampleInputEmail2">离职时间</label>
+										    <input type="email" class="form-control" id="exampleInputEmail2" placeholder="请输入员工的身份证号">
+										  </div>
+										   <div class="form-group">
+										    <label for="exampleInputEmail2">TO</label>
+										    <input type="email" class="form-control" id="exampleInputEmail2" placeholder="请输入员工的身份证号">
+										  </div>
+										  <button type="submit" class="btn btn-sm btn-primary">查询</button>
+										</form>
+									</div>
+									 <div id="quit_staff_grid"></div>
+								</div>
 								<!-- PAGE CONTENT ENDS -->
 							</div><!-- /.col -->
 						</div><!-- /.row -->
@@ -118,6 +152,7 @@ tr.pq-row-delete td
 			<%@ include file="/common/include/plugins.jsp"%>
 		</div><!-- /.main-container -->
 		<%-- <div id="quit_staff_dialog" class="dialog-model"><%@ include file="quit_staff_dialog.jsp"%></div> --%>
+		<div id="staff_export_dialog" class="dialog-model"><%@ include file="quit_export_dialog.jsp"%></div>
 		<script type="text/javascript">
 			<%@ include file="quit_staff.js"%>
 		</script>

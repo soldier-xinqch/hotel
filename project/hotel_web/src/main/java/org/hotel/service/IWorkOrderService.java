@@ -22,5 +22,7 @@ public interface IWorkOrderService extends BaseService<WorkOrder> {
 	List<WorkOrder> findworkOrderByOrgId(String orgId);
 
 	List<WorkOrder> findWorkOrdersByOrgs(List<Org> orgs);
+	
+	WorkOrder findOrderById(String orderId);
 
 }

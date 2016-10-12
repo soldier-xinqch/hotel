@@ -54,7 +54,7 @@
 						type:'button',
 						label: '导出',
 						listener: function(){
-							 window.open("exportWorkOrder");						
+							tab_export();						
 						},
 						cls: 'btn btn-sm'
                     }
@@ -112,7 +112,7 @@
             var rowIndx = getRowIndx();
             if (rowIndx != null) {
                 var row = $grid.pqGrid('getRowData', {rowIndx: rowIndx});
-                var updateDialogMsg = '<div"><form id="update_tab_from" class="form-horizontal" role="form">'+$("#menu_add").html()+'</form></div>';
+                var updateDialogMsg = '<div"><form id="update_tab_from" class="form-horizontal" role="form">'+$("#workOrder_dialog").html()+'</form></div>';
                 bootbox.dialog({
                 	title: "修改班次", 
                 	message:updateDialogMsg,
@@ -217,7 +217,7 @@
         function tab_addRow() {
             var $frm = $("form#crud-form");
             $frm.find("input").val("");
-            var addMessage = '<div class="dialog-cls"><form id="add_tab_from" class="form-horizontal" role="form">'+$("#menu_add").html()+'</form></div>';
+            var addMessage = '<div class="dialog-cls"><form id="add_tab_from" class="form-horizontal" role="form">'+$("#workOrder_dialog").html()+'</form></div>';
             bootbox.dialog({ 
             	title: "新增菜单", 
             	message:addMessage,
@@ -369,5 +369,39 @@
                 return null;
             }
         }
+        function tab_export() {
+          	var delMsg = '<div class="dialog-cls"><form id="export_from" class="form-horizontal" role="form">'+$("#workOrder_export_dialog").html()+'</form></div>';
+          	bootbox.dialog({
+          		  message: delMsg,
+          		  title: "导出列表",
+          		  buttons: {
+          		    success: {
+          		      label: "导出",
+          		      className: "btn btn-sm btn-success",
+          		      callback: function() {
+          		    	  window.open("exportExcel?"+$("#export_from").serialize());
+          		      }
+          		    },
+          		    canle:{
+     	            	 label: "取消",
+     	                 className: "btn btn-sm btn-grey",
+     	                 callback: function () {
+     	                 }
+          		    }
+          		  }
+          		});
+          	$('#export_from .row').find(" .form-group div").find("select").pqSelect({ 
+          		selectallText:'全选',
+	    		checkbox: true,
+	    		width:'270px'
+	    	});
+          	$('.datepicker').datetimepicker({
+    			language: 'zh-CN',
+    			format: 'yyyy-mm-dd hh:ii:ss',
+    	        autoclose: true,
+    	        todayBtn: true,
+    	        pickerPosition: "bottom-left"
+            });
+          }
     });    
     

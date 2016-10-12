@@ -22,7 +22,7 @@
 	</context:component-scan>
 	
     <!-- 解决静态资源被拦截的问题 -->
-    <mvc:default-servlet-handler/>
+    <!-- <mvc:default-servlet-handler/> -->
 
 
 	<!-- 这里拦截器还有一种配置方法【针对路径进行配置】 推荐使用这个，方便直观 -->
@@ -70,7 +70,7 @@
 		cache-period="31556926"  order="2147483647" />
 	<mvc:resources mapping="public/waterfall_imgs/**" location="public/waterfall_imgs/"
 		cache-period="31556926"  order="2147483647" />
-	<mvc:resources mapping="public/plugins/**" location="public/plugins/"
+	<mvc:resources mapping="plugins/**" location="plugins/"
 		cache-period="31556926"  order="2147483647" />
 		
 	<!-- SpringMVC在超出上传文件限制时，会抛出org.springframework.web.multipart.MaxUploadSizeExceededException -->  

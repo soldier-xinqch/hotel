@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.hotel.mapper.ScheduleStaffMapper" >
+  <resultMap id="BaseResultMap" type="org.hotel.model.ScheduleStaff" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="staff_id" property="staffId" jdbcType="VARCHAR" />
+    <result column="staff_no" property="staffNo" jdbcType="VARCHAR" />
+    <result column="staff_name" property="staffName" jdbcType="VARCHAR" />
+    <result column="order_id" property="orderId" jdbcType="VARCHAR" />
+    <result column="order_name" property="orderName" jdbcType="VARCHAR" />
+    <result column="org_id" property="orgId" jdbcType="VARCHAR" />
+    <result column="org_name" property="orgName" jdbcType="VARCHAR" />
+    <result column="schedule_id" property="scheduleId" jdbcType="VARCHAR" />
+    <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    schedule_staff.id, schedule_staff.staff_id, schedule_staff.staff_no, schedule_staff.staff_name, schedule_staff.order_id,
+    schedule_staff.order_name, schedule_staff.org_id, schedule_staff.org_name, schedule_staff.schedule_id, 
+    schedule_staff.start_time, schedule_staff.end_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from schedule_staff
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from schedule_staff
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="org.hotel.model.ScheduleStaff" >
+    insert into schedule_staff (id, staff_id, staff_no, 
+      staff_name, order_id, order_name, 
+      org_id, org_name, schedule_id, 
+      start_time, end_time)
+    values (#{id,jdbcType=VARCHAR}, #{staffId,jdbcType=VARCHAR}, #{staffNo,jdbcType=VARCHAR}, 
+      #{staffName,jdbcType=VARCHAR}, #{orderId,jdbcType=VARCHAR}, #{orderName,jdbcType=VARCHAR}, 
+      #{orgId,jdbcType=VARCHAR}, #{orgName,jdbcType=VARCHAR}, #{scheduleId,jdbcType=VARCHAR}, 
+      #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="org.hotel.model.ScheduleStaff" >
+    insert into schedule_staff
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="staffId != null" >
+        staff_id,
+      </if>
+      <if test="staffNo != null" >
+        staff_no,
+      </if>
+      <if test="staffName != null" >
+        staff_name,
+      </if>
+      <if test="orderId != null" >
+        order_id,
+      </if>
+      <if test="orderName != null" >
+        order_name,
+      </if>
+      <if test="orgId != null" >
+        org_id,
+      </if>
+      <if test="orgName != null" >
+        org_name,
+      </if>
+      <if test="scheduleId != null" >
+        schedule_id,
+      </if>
+      <if test="startTime != null" >
+        start_time,
+      </if>
+      <if test="endTime != null" >
+        end_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="staffId != null" >
+        #{staffId,jdbcType=VARCHAR},
+      </if>
+      <if test="staffNo != null" >
+        #{staffNo,jdbcType=VARCHAR},
+      </if>
+      <if test="staffName != null" >
+        #{staffName,jdbcType=VARCHAR},
+      </if>
+      <if test="orderId != null" >
+        #{orderId,jdbcType=VARCHAR},
+      </if>
+      <if test="orderName != null" >
+        #{orderName,jdbcType=VARCHAR},
+      </if>
+      <if test="orgId != null" >
+        #{orgId,jdbcType=VARCHAR},
+      </if>
+      <if test="orgName != null" >
+        #{orgName,jdbcType=VARCHAR},
+      </if>
+      <if test="scheduleId != null" >
+        #{scheduleId,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null" >
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.hotel.model.ScheduleStaff" >
+    update schedule_staff
+    <set >
+      <if test="staffId != null" >
+        staff_id = #{staffId,jdbcType=VARCHAR},
+      </if>
+      <if test="staffNo != null" >
+        staff_no = #{staffNo,jdbcType=VARCHAR},
+      </if>
+      <if test="staffName != null" >
+        staff_name = #{staffName,jdbcType=VARCHAR},
+      </if>
+      <if test="orderId != null" >
+        order_id = #{orderId,jdbcType=VARCHAR},
+      </if>
+      <if test="orderName != null" >
+        order_name = #{orderName,jdbcType=VARCHAR},
+      </if>
+      <if test="orgId != null" >
+        org_id = #{orgId,jdbcType=VARCHAR},
+      </if>
+      <if test="orgName != null" >
+        org_name = #{orgName,jdbcType=VARCHAR},
+      </if>
+      <if test="scheduleId != null" >
+        schedule_id = #{scheduleId,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null" >
+        start_time = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.hotel.model.ScheduleStaff" >
+    update schedule_staff
+    set staff_id = #{staffId,jdbcType=VARCHAR},
+      staff_no = #{staffNo,jdbcType=VARCHAR},
+      staff_name = #{staffName,jdbcType=VARCHAR},
+      order_id = #{orderId,jdbcType=VARCHAR},
+      order_name = #{orderName,jdbcType=VARCHAR},
+      org_id = #{orgId,jdbcType=VARCHAR},
+      org_name = #{orgName,jdbcType=VARCHAR},
+      schedule_id = #{scheduleId,jdbcType=VARCHAR},
+      start_time = #{startTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+   <select id="findStaffScheduleByScheduleId" resultType="java.lang.String" parameterType="java.lang.String" >
+    select staff_id from schedule_staff
+    where schedule_id = #{scheduleId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteScheduleStaff" parameterType="java.lang.String" >
+    delete from schedule_staff
+    where staff_id = #{staffId,jdbcType=VARCHAR} and schedule_id = #{scheduleId,jdbcType=VARCHAR}
+  </delete>
+   <select id="findStaffScheduleByScheduleIdAndStaffId" resultMap="BaseResultMap"  parameterType="java.lang.String" >
+    select <include refid="Base_Column_List" /> from schedule_staff
+    where staff_id = #{staffId,jdbcType=VARCHAR} and schedule_id = #{scheduleId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="findStaffScheduleByNoAndTime" resultMap="BaseResultMap"  parameterType="java.lang.String" >
+    select <include refid="Base_Column_List" /> from schedule_staff,schedule
+    where schedule.del_flag=0 and schedule.id=schedule_staff.schedule_id 
+    and schedule_staff.staff_no = #{staffNo,jdbcType=VARCHAR}
+    and #{brushTime} <![CDATA[ >= ]]> schedule_staff.start_time and #{brushTime} <![CDATA[ <= ]]> schedule_staff.end_time
+  </select>
+  
+</mapper>

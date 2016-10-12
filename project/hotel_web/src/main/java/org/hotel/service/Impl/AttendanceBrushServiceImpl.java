@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hotel.mapper.AttendanceBrushMapper;
 import org.hotel.model.AttendanceBrush;
+import org.hotel.model.AttendanceSearch;
 import org.hotel.model.Org;
 import org.hotel.service.IAttendanceBrushService;
 import org.hotel.utils.CommonUtil;
@@ -52,6 +53,17 @@ public class AttendanceBrushServiceImpl implements IAttendanceBrushService{
 	@Override
 	public AttendanceBrush findBrushByStaffAndMac(String staffNo,String mac,String day) {
 		return attendanceBrushMapper.findBrushByStaffAndMac(staffNo,mac,day);
+	}
+
+	@Override
+	public List<AttendanceBrush> findAttendanceBrushByLikes(List<Org> orgIds, String[] staffId, String startTime,
+			String endTime) {
+		return attendanceBrushMapper.findAttendanceBrushByLikes(orgIds,staffId,startTime,endTime);
+	}
+
+	@Override
+	public List<AttendanceSearch> findConts(List<Org> orgs) {
+		return attendanceBrushMapper.findConts(orgs);
 	}
 	
 	

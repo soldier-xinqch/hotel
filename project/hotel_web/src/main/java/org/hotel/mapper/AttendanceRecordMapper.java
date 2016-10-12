@@ -22,4 +22,6 @@ public interface AttendanceRecordMapper {
 	List<AttendanceRecord> findAll();
 
 	List<AttendanceRecord> findAttendanceRecordByOrgs(@Param("orgs") List<Org> orgs);
+
+	List<AttendanceRecord> findAttendanceRecordByLikes(@Param("orgs") List<Org> orgs,@Param("staffId") String[] staffId);
 }

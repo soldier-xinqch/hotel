@@ -6,6 +6,8 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.hotel.common.CommEnum.AUTHFLAG;
 import org.hotel.common.CommEnum.RESULTFLAG;
 import org.hotel.model.Menu;
@@ -62,6 +64,11 @@ public class RoleController {
 	public String roleIndex(HttpServletRequest request){
 		Cache cache = cacheManager.getCache("userCache");
 		Element element =  cache.get("LoginUserKey");
+		if(null  == element){
+			Subject currentUser = SecurityUtils.getSubject();       
+			currentUser.logout();
+			return null;
+		} 
 		User user = (User) element.getValue();
 		List<Org> orgs = orgService.findOrgListById(user.getOrgId());
 		this.orgs =orgs; 
@@ -175,7 +182,24 @@ public class RoleController {
 		return map;
 	}
 	
-	
+	@RequestMapping(value="validate",method=RequestMethod.GET)
+	public @ResponseBody Map<String,Object> validate(HttpServletRequest request){
+		Map<String,Object> map = Maps.newHashMap();
+		try {
+			String roleName = request.getParameter("roleName");
+			String roleKey = request.getParameter("roleKey");
+			String status = request.getParameter("status");
+			if(status.equals(AUTHFLAG.ADD.getValue())&&(StringUtils.isEmpty(roleKey)||StringUtils.isEmpty(roleName))){
+				map.put("message","缺少必要参数");
+				map.put("type",RESULTFLAG.ERROR.getValue());
+				return map;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		map.put("type",RESULTFLAG.SUCCESS.getValue());
+		return map;
+	}
 	
 	private Role dealRoleMsg(Role role){
 		String orgId = role.getOrgId();
@@ -183,6 +207,10 @@ public class RoleController {
 			String[] idAndName = orgId.split("-");
 			role.setOrgId(idAndName[0]);
 			role.setOrgName(idAndName[1]);
+		}
+		if(StringUtils.isEmpty(role.getOrgId())){
+			role.setOrgId(user.getOrgId());
+			role.setOrgName(user.getOrgName());
 		}
 		return role;
 	}

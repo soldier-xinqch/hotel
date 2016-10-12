@@ -6,6 +6,10 @@
 	<head>
 		<title>菜单设置</title>
 		<%@ include file="/common/include/head_meta.jsp"%>
+		<script type="text/ecmascript" src="../plugins/jqueryGrid/js/jquery.jqGrid.min.js"></script>
+		<script type="text/ecmascript" src="../plugins/jqueryGrid/js/i18n/grid.locale-cn.js"></script>
+		
+		<link rel="stylesheet" type="text/css" media="screen" href="../plugins/jqueryGrid/css/ui.jqgrid.css" />
 		<style type="text/css">
 			.ui-dialog *
 {
@@ -54,6 +58,12 @@ tr.pq-row-delete td
 }
 .ui-button{
 	margin: 5 0px;
+}
+div.ui-icon pq-icon ui-icon ui-icon-triangle-1-s{
+	margin-top:0em;
+}
+.ui-icon{
+	margin-top:0em;
 }
 		</style>
 	</head>
@@ -106,7 +116,9 @@ tr.pq-row-delete td
 						<div class="row">
 							<div class="col-lg-12">
 								<!-- PAGE CONTENT BEGINS -->
-									 <div id="org_grid"></div>
+									 <!-- <div id="org_grid"></div> -->
+									 <table id="tree"></table>
+    								 <div id="pager"></div>
 								<!-- PAGE CONTENT ENDS -->
 							</div><!-- /.col -->
 						</div><!-- /.row -->
@@ -120,7 +132,6 @@ tr.pq-row-delete td
 		
 <!--  dialog   -->
 <div id="org_dialog" class="dialog-model"><%@ include file="org_dialog.jsp"%></div>
-
 		<script type="text/javascript">
 			<%@ include file="org_setting.js"%>
 		</script>

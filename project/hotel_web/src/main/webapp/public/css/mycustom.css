@@ -26,3 +26,7 @@ div.ui-icon pq-icon ui-icon ui-icon-triangle-1-s{
 .pq-ui-button.ui-widget-header{
 	padding: 0 10px;
 }
+
+.searchDiv{
+	margin: 5px;
+}

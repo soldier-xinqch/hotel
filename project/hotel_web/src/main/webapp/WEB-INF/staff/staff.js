@@ -29,7 +29,8 @@
     	            method: "GET",
     	            url: "pageData",
     	            getData: function (dataJSON) {  
-    	                return { curPage: dataJSON.pageNo, totalRecords: dataJSON.pageSize,data: dataJSON.list };
+    	            	 var data = dataJSON.list;
+    	                 return { curPage: dataJSON.pageNo, totalRecords: dataJSON.total, data: data };
     	            }
     	        };
     	var colModel = [
@@ -58,9 +59,9 @@
 
     	        			 }
     	        		},
-    	        		{ title: "年假",dataIndx:"yearRestDay", width: '5%', dataType: "string", align: "center" },
-    	        		{ title: "存休",dataIndx:"keepRestDay", width: '5%', dataType: "string", align: "center" },
-    	        		{ title: "操作", editable: false, minWidth: '10%', sortable: false,align: "center", render: function (ui) {
+    	        		{ title: "年假",dataIndx:"yearRestDay", width: '4%', dataType: "string", align: "center" },
+    	        		{ title: "存休",dataIndx:"keepRestDay", width: '4%', dataType: "string", align: "center" },
+    	        		{ title: "操作", editable: false,width: '260px', minWidth: '13%', sortable: false,align: "center", render: function (ui) {
     	                    return "<button type='button' class='btn btn-xs btn-danger delete_btn'>办理离职</button>\
     	                        <button type='button' class='btn btn-xs btn-primary edit_btn'>年假管理</button>";
     	                	}
@@ -74,34 +75,18 @@
                     {type: 'separator' },
                     {
                         type: 'button',
-                        label: "导出至Excel",
-                        cls:'btn btn-sm btn-info',
+                        label: "导出",
+                        cls:'btn btn-sm',
                         listeners: [{"click": function (evt) {
-//                        		tabId.pqGrid("exportData", {
-//                        			url: "exportExcel1",
-//                        			filename:'',
-//                        			sheetName: "pqGrid sheet",
-//                        			format:'xls',
-////                        			noheader:true,
-////                        			nopqdata:treu,
-//                        			render:true,
-//                        			title:'12312312312321321321',
-//                        			zip:false
-//                        		});
-                        	tab_export();
-//                    		window.open("exportExcel1");
+                        	 tab_export();
                             }
                         }]
                     }
                 ]
             };
         var obj = { 
-        	title:"企业信息列表",
-//			width: '100%',
 			height: "100%",
-    		title: "企业列表",
-//            minWidth: 500,
-//            height: 400,
+    		title: "员工列表",
             flexHeight: true,
             showTitle:true,
 			showButton:true,
@@ -326,38 +311,7 @@
           		      label: "导出",
           		      className: "btn btn-sm btn-success",
           		      callback: function() {
-          		    	 var add_tab_data=$("#export_from input[type=hidden]").map(function(){
-     	                		  return ($(this).attr("name")+'='+$(this).val());
-     	                		}).get().join("&") ;
-          		    	 alert(1);
-          		    	  $.ajax({
-    	                		   type: "get",
-    	                		   url: "exportExcel1",
-    	                		   data: add_tab_data,
-    	                		   success: function(data){
-    	                			   alert(1);
-    	                			   window.open("exportExcel1");
-    	                			   if('success' == data.type){
-    	                				   
-    	                				   $grid.pqGrid("deleteRow", { rowIndx: rowIndx });
-    	                	               $grid.pqGrid("setSelection", { rowIndx: rowIndx });
-    	                				   Lobibox.notify("success", {
-    	                		        		icon: false,
-    	                		        		height:'300px',
-    	                		        		title: '导出提示',
-    	                		        		msg: '导出成功'
-    	                		        	});
-    	                			   }else{
-    	                				   Lobibox.notify("error", {
-    	                		        		icon: false,
-    	                		        		height:'300px',
-    	                		        		title: '导出提示',
-    	                		        		msg: '导出失败，请检查删除的数据'
-    	                		        	});
-    	                			   }
-    	                			   $grid.pqGrid( "refreshDataAndView" )
-    	                		   }
-    	                		});
+          		    	  window.open("exportExcel?"+$("#export_from").serialize());
           		      }
           		    },
           		    canle:{
@@ -369,6 +323,7 @@
           		  }
           		});
           	$('#export_from .row').find(" .form-group div").find("select").pqSelect({ 
+          		selectallText:'全选',
 	    		checkbox: true,
 	    		width:'270px'
 	    	});

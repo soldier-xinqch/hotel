@@ -3,9 +3,15 @@ package org.hotel.controller.attendance;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.hotel.common.CommEnum.RESULTFLAG;
+import org.hotel.common.CommEnum.STAFFSTATUS;
 import org.hotel.model.AttendanceRecord;
 import org.hotel.model.AttendanceType;
 import org.hotel.model.Org;
@@ -15,6 +21,8 @@ import org.hotel.service.IAttendanceRecordService;
 import org.hotel.service.IAttendanceTypeService;
 import org.hotel.service.IOrgService;
 import org.hotel.service.IStaffService;
+import org.hotel.utils.ExcelEntity;
+import org.hotel.utils.ExportExcelUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -24,6 +32,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import net.sf.ehcache.Cache;
@@ -58,18 +67,20 @@ private final String urlStr = "attendanceRecord";
 	
 	@RequestMapping("index")
 	public String index(HttpServletRequest request){
-		List<Staff> staffs = staffService.findAll();
-		List<AttendanceType> types = attendanceTypeService.findAll();
 		Cache cache = cacheManager.getCache("userCache");
-		Element element =  cache.get("LoginUserKey");
+		Element element = cache.get("LoginUserKey");
+		if(null  == element){
+			Subject currentUser = SecurityUtils.getSubject();       
+			currentUser.logout();
+			return null;
+		} 
 		User user = (User) element.getValue();
 		List<Org> orgs = orgService.findOrgListById(user.getOrgId());
-		this.orgs =orgs; 
-		this.user =user; 
-		request.setAttribute("orgs", orgs);
+		List<Staff> staffs = staffService.findStaffByOrgs(orgs,STAFFSTATUS.WORKING.getValue());
+		this.orgs = orgs;
 		request.setAttribute("staffs", staffs);
-		request.setAttribute("types", types);
-		request.setAttribute("menuKey", urlStr+"index");
+		request.setAttribute("orgs", orgs);
+		request.setAttribute("menuKey", urlStr + "index");
 		return "work/attendanceRecord";
 	}
 	
@@ -134,5 +145,49 @@ private final String urlStr = "attendanceRecord";
 			attendance.setAttendanceTypeName(idAndName[1]);
 		}
 		return attendance;
+	}
+	
+	@RequestMapping(value="exportExcel",method=RequestMethod.GET)
+	public @ResponseBody String exportExcels(HttpServletRequest request,HttpServletResponse response){
+		try{
+			response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"); 
+	        response.setHeader("Content-Disposition", "attachment;filename="+ new String(("staff" + ".xlsx").getBytes(), "utf-8"));
+//	        String startTime = request.getParameter("startTime");
+//	        String endTime = request.getParameter("endTime");
+	        String[] field = request.getParameterValues("field");
+	        String[] staffId = request.getParameterValues("staffId");
+	        String orgId = request.getParameter("orgId");
+	        if(null == null){
+	        	field = new String[]{"员工编号-StaffNo","员工姓名-StaffName","所属部门-OrgName","工作日期-WorkTime","休息日期-RestTime","考勤类型-AttendanceTypeName","时间（小时）-Num"};
+	        }
+	        
+	        String[] columnNames = new String[field.length];
+	        String[] methodNames = new String[field.length];
+	        for (int i = 0; i < field.length; i++) {
+				String[] temps = field[i].split("-");
+				columnNames[i] = temps[0];
+				methodNames[i] = "get"+temps[1];
+			}
+	        List<Org> orgIds = null;
+	        if(!StringUtils.isEmpty(orgIds)){
+	        	orgIds = Lists.newArrayList();
+	        	Org org = new Org();
+	        	org.setId(orgId);
+	        }else{
+	        	orgIds = orgs;
+	        }
+	        List<AttendanceRecord> attendanceRecords = attendanceRecordService.findAttendanceRecordByLikes(orgs,staffId);
+	        // 生成ExcelEntity实体，包含4个必备参数
+	        ExcelEntity<AttendanceRecord> excelEntity = new ExcelEntity<AttendanceRecord>("", columnNames, methodNames, attendanceRecords);
+	        excelEntity.setHeader("考勤单信息");
+	        Workbook excel = ExportExcelUtils.export2Excel(excelEntity);
+	        ServletOutputStream outputStream = response.getOutputStream();
+	        ExportExcelUtils.saveWorkBook2007(excel, excelEntity.getFileName(), outputStream);
+	        outputStream.flush();
+	        outputStream.close();
+	    }catch (Exception e) {
+	        e.printStackTrace();
+	    }
+		return urlStr;
 	}
 }

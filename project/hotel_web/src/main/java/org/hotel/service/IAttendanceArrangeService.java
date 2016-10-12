@@ -7,7 +7,7 @@ import org.hotel.model.AttendanceArrange;
 import org.hotel.model.Org;
 
 /**
- *  菜单数据接口
+ *  排班数据接口
  * @author xinqch
  *
  */

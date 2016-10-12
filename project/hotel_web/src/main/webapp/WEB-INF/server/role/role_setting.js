@@ -12,7 +12,8 @@
 	            method: "GET",
 	            url: "pageData",
 	            getData: function (dataJSON) {  
-	                return { curPage: dataJSON.pageNo, totalRecords: dataJSON.pageSize,data: dataJSON.list };
+	            	var data = dataJSON.list;
+	                return { curPage: dataJSON.pageNo, totalRecords: dataJSON.total, data: data };
 	            }
 	        };
 	var colModel = [
@@ -31,7 +32,7 @@
 	        	            }
 	        	            var checkState =flag?true:false;
 	                    return "<button id="+rowData.id+" type='button' class='btn btn-xs btn-primary auth_btn'>授权</button>";
-//	                    		"\TODO 以后时间不禁在加上吧
+//	                    		"\TODO 以后时间不紧在加上吧
 //	                        <button id="+rowData.id+" type='button' class='btn btn-xs "+btnCls+" delete_btn' >"+btnName+"</button>";
 	                }
 	                }
@@ -172,6 +173,9 @@
 	                 label: "保存",
 	                 className: "btn btn-sm btn-success",
 	                 callback: function () {
+	                	 if(vailDateParam('ADD')){
+	                		 return false;
+	                	 }
  	                	 $.ajax({
 	                		   type: "POST",
 	                		   url: "addRole",
@@ -306,7 +310,7 @@
  		   data: {"id":rowData.id},
  		   success: function(data){
  			   //TODO 将得到的数据插入到弹出框中 .elementId
- 			  alert(data.authList);
+// 			  alert(data.authList);
  		   }
  		});
         bootbox.dialog({ 
@@ -419,5 +423,30 @@
         		  }
         		});
         }
+    }
+    function vailDateParam(status){
+    	var isSuccess;
+    	var roleName = $('form input[name=roleName]').val();
+    	var roleKey = $('form input[name=roleKey]').val();
+    	$.ajax({
+ 		   type: "GET",
+ 		   url: "validate",
+ 		   async: false,
+ 		   data: "roleName="+roleName+"&roleKey="+roleKey+"&status="+status,
+ 		   success: function(data){
+ 			   if('success' != data.type){
+ 				   Lobibox.notify("error", {
+ 					   	size: 'mini',
+ 		        		position: 'center top',
+ 		        		msg: data.message
+ 		        	});
+ 				  isSuccess=true;
+ 			   }
+ 			   if('success'==data.type){
+ 				   isSuccess=false;
+ 			   }
+ 		   }
+ 		});
+    	return isSuccess;
     }
 });    

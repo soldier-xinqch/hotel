@@ -22,4 +22,7 @@ public interface AttendanceExceptionalMapper {
 	List<AttendanceExceptional> findAll();
 
 	List<AttendanceExceptional> findAttendanceExceptionalByOrgs(@Param("orgs") List<Org> orgs);
+
+	List<AttendanceExceptional> findAttendanceExceptionalByLikes(@Param("orgs") List<Org> orgs,@Param("exceptions") List<String> exceptions,
+			@Param("staffId") String[] staffId,@Param("startTime") String startTime,@Param("endTime") String endTime);
 }

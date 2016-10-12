@@ -5,13 +5,17 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.hotel.common.BaseController;
+import org.hotel.common.CommEnum.AUTHFLAG;
 import org.hotel.common.CommEnum.RESULTFLAG;
 import org.hotel.model.Org;
 import org.hotel.model.User;
 import org.hotel.service.IOrgService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -46,12 +50,32 @@ public class OrgController extends BaseController<Org>{
 //		List<Org> orgs = orgService.findAll();
 		Cache cache = cacheManager.getCache("userCache");
 		Element element =  cache.get("LoginUserKey");
+		if(null  == element){
+			Subject currentUser = SecurityUtils.getSubject();       
+			currentUser.logout();
+			return null;
+		} 
 		User user = (User) element.getValue();
 		List<Org> orgs = orgService.findOrgListById(user.getOrgId());
 		this.user = user;
 		request.setAttribute("orgs", orgs);
 		request.setAttribute("menuKey", urlStr+"index");
 		return "server/org/org_setting";
+	}
+	
+	@RequestMapping(value="orgTree",method=RequestMethod.POST)
+	public @ResponseBody List<Org> orgTree(HttpServletRequest request){
+//		List<Org> orgs = orgService.findAll();
+		Cache cache = cacheManager.getCache("userCache");
+		Element element =  cache.get("LoginUserKey");
+		if(null  == element){
+			Subject currentUser = SecurityUtils.getSubject();       
+			currentUser.logout();
+			return null;
+		} 
+		User user = (User) element.getValue();
+		List<Org> orgs = orgService.findOrgListById(user.getOrgId());
+		return orgs;
 	}
 	
 	@RequestMapping(value="/pageData",method=RequestMethod.GET)
@@ -73,8 +97,7 @@ public class OrgController extends BaseController<Org>{
 	public @ResponseBody Map<String,Object> addOrg(HttpServletRequest request,Org org){
 		Map<String,Object> map = Maps.newHashMap();
 		org.setCreateUser(user.getId());
-		org.setParentId(user.getOrgId());
-		org.setParentName(user.getOrgName());
+		dealOrgMsg(org);
 		int isSuccess = orgService.insert(org);
 		map.put("type", isSuccess>0 ?RESULTFLAG.SUCCESS.getValue():RESULTFLAG.ERROR.getValue());
 		
@@ -85,6 +108,7 @@ public class OrgController extends BaseController<Org>{
 	public  @ResponseBody Map<String,Object> modifyOrg(HttpServletRequest request,Org org){
 		Map<String,Object> map = Maps.newHashMap();
 		org.setModifyUser(user.getId());
+		dealOrgMsg(org);
 		int isSuccess = orgService.modify(org);
 		map.put("type", isSuccess>0 ?RESULTFLAG.SUCCESS.getValue():RESULTFLAG.ERROR.getValue());
 		return map;
@@ -97,5 +121,37 @@ public class OrgController extends BaseController<Org>{
 		int isSuccess = orgService.logicDelete(id);
 		map.put("type", isSuccess>0 ?RESULTFLAG.SUCCESS.getValue():RESULTFLAG.ERROR.getValue());
 		return map;
+	}
+	
+	@RequestMapping(value="validate",method=RequestMethod.GET)
+	public @ResponseBody Map<String,Object> validate(HttpServletRequest request){
+		Map<String,Object> map = Maps.newHashMap();
+		try {
+			String orgName = request.getParameter("orgName");
+			String status = request.getParameter("status");
+			if(status.equals(AUTHFLAG.ADD.getValue())&&(StringUtils.isEmpty(orgName))){
+				map.put("message","缺少必要参数");
+				map.put("type",RESULTFLAG.ERROR.getValue());
+				return map;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		map.put("type",RESULTFLAG.SUCCESS.getValue());
+		return map;
+	}
+	
+	private User dealOrgMsg(Org org){
+		String orgId = org.getOrgId();
+		if(!StringUtils.isEmpty(orgId)){
+			String[] idAndName = orgId.split("-");
+			org.setParentId(idAndName[0]);
+			org.setParentName(idAndName[1]);
+		}
+		if(StringUtils.isEmpty(org.getOrgId())){
+			org.setParentId(user.getOrgId());
+			org.setParentName(user.getOrgName());
+		}
+		return user;
 	}
 }

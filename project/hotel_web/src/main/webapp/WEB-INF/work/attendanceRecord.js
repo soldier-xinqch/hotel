@@ -69,7 +69,7 @@
 						type:'button',
 						label: '导出',
 						listener: function(){
-							 window.open("exportAttendanceRecord");							
+							tab_export();						
 						},
 						cls: 'btn btn-sm '
                     }
@@ -114,21 +114,6 @@
             scrollModel: { autoFit: false },
             collapsible: { on: true, collapsed: false },
             complete:function(event, ui){
-            	//TODO  
-//            	 var $grid = $(this);
-//            	 var column = $grid.getColumn({ dataIndx: "menuLevel" });
-//            	 var filter = column.filter;
-//            	 filter.cache = null;
-//                 filter.options = grid.getData({ dataIndx: ["menuLevel"] });
-                 //and apply initial filtering.
-//                 grid.filter({
-//                     oper: 'add',
-//                     data: [
-//                         { dataIndx: 'ShipRegion', value: 'RJ' },
-//                         { dataIndx: 'ContactName', value: 'M' },
-//     					 { dataIndx: 'ContactName', value: 'M' }
-//                     ]
-//                 });            
             }
         };
         obj.columnTemplate = {            
@@ -157,7 +142,7 @@
             var rowIndx = getRowIndx();
             if (rowIndx != null) {
                 var row = $grid.pqGrid('getRowData', {rowIndx: rowIndx});
-                var updateDialogMsg = '<div"><form id="update_tab_from" class="form-horizontal" role="form">'+$("#menu_add").html()+'</form></div>';
+                var updateDialogMsg = '<div"><form id="update_tab_from" class="form-horizontal" role="form">'+$("#attendanceRecord_dialog").html()+'</form></div>';
                 bootbox.dialog({
                 	title: "修改菜单", 
                 	message:updateDialogMsg,
@@ -209,7 +194,7 @@
         function updateMeuns(row){
         	$('#update_tab_from select[name=orgId]').find("option[value="+row.orgId+"-"+row.orgName+"]").attr("selected",true);
         	$('#update_tab_from select[name=staffId]').find("option[value="+row.staffId+"-"+row.staffName+"]").attr("selected",true);
-        	$('#update_tab_from select[name=staffId]').find("option[value="+row.attendanceTypeId+"-"+row.attendanceTypeName+"]").attr("selected",true);
+        	$('#update_tab_from select[name=attendanceTypeId]').find("option[value="+row.attendanceTypeId+"-"+row.attendanceTypeName+"]").attr("selected",true);
         	
         	$('#update_tab_from select[name=staffId]').pqSelect({
         		checkbox: false, //adds checkbox to options   
@@ -241,7 +226,7 @@
         function tab_addRow() {
             var $frm = $("form#crud-form");
             $frm.find("input").val("");
-            var addMessage = '<div class="dialog-cls"><form id="add_tab_from" class="form-horizontal" role="form">'+$("#menu_add").html()+'</form></div>';
+            var addMessage = '<div class="dialog-cls"><form id="add_tab_from" class="form-horizontal" role="form">'+$("#attendanceRecord_dialog").html()+'</form></div>';
             bootbox.dialog({ 
             	title: "新增菜单", 
             	message:addMessage,
@@ -284,12 +269,11 @@
     	                 }
     	             }
     	    	},
-    	    	callback:setTimeout(selectInput,200)
+    	    	callback:setTimeout(selectInput,0)
             });
             $("#popup-dialog-crud").dialog("open");
         }
         function selectInput(){
-//        	$('#add_tab_from .row').find(" .form-group div").find("select").select2();
         	$('#add_tab_from .row').find(" .form-group div").find("select").pqSelect({ 
         		selectClsType:'',
         		deselect: false,
@@ -301,8 +285,6 @@
         	        autoclose: true,
         	        todayBtn: true,
         	        pickerPosition: "bottom-left"
-//        	            startDate: "2013-02-14 10:00",
-//        	            minuteStep: 10
         	});
         }
         function formatRepoProvince(repo) {
@@ -381,5 +363,39 @@
                 return null;
             }
         }
+        function tab_export() {
+          	var delMsg = '<div class="dialog-cls"><form id="export_from" class="form-horizontal" role="form">'+$("#attendanceRecord_export_dialog").html()+'</form></div>';
+          	bootbox.dialog({
+          		  message: delMsg,
+          		  title: "导出列表",
+          		  buttons: {
+          		    success: {
+          		      label: "导出",
+          		      className: "btn btn-sm btn-success",
+          		      callback: function() {
+          		    	  window.open("exportExcel?"+$("#export_from").serialize());
+          		      }
+          		    },
+          		    canle:{
+     	            	 label: "取消",
+     	                 className: "btn btn-sm btn-grey",
+     	                 callback: function () {
+     	                 }
+          		    }
+          		  }
+          		});
+          	$('#export_from .row').find(" .form-group div").find("select").pqSelect({ 
+          		selectallText:'全选',
+	    		checkbox: true,
+	    		width:'270px'
+	    	});
+          	$('.datepicker').datetimepicker({
+    			language: 'zh-CN',
+    			format: 'yyyy-mm-dd hh:ii:ss',
+    	        autoclose: true,
+    	        todayBtn: true,
+    	        pickerPosition: "bottom-left"
+            });
+          }
     });    
     

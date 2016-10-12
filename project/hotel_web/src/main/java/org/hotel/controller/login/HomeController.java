@@ -2,6 +2,8 @@ package org.hotel.controller.login;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.hotel.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -31,6 +33,11 @@ public class HomeController {
 	public String title(HttpServletRequest request){
 		Cache cache = cacheManager.getCache("userCache");
 		Element element =  cache.get("LoginUserKey");
+		if(null  == element){
+			Subject currentUser = SecurityUtils.getSubject();       
+			currentUser.logout();
+			return null;
+		} 
 		User user = (User) element.getValue();
 		request.setAttribute("menuKey", urlStr+"index");
 		request.setAttribute("user", user);

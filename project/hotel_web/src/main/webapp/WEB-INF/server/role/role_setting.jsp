@@ -59,7 +59,7 @@ tr.pq-row-delete td
 	</head>
 
 	<body>
-		<%@ include file="/common/include/head_title.jsp"%>
+		<jsp:include page="/home/title" />
 		<div class="main-container" id="main-container">
 			<script type="text/javascript">
 				try{ace.settings.check('main-container' , 'fixed')}catch(e){}
@@ -95,7 +95,7 @@ tr.pq-row-delete td
 					<div class="page-content">
 						<div class="page-header">
 							<h1>
-								企业管理
+								角色管理
 								<small>
 									<i class="icon-double-angle-right"></i>
 									 查看

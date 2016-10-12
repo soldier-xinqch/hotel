@@ -5,7 +5,10 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.hotel.common.BaseController;
+import org.hotel.common.CommEnum.AUTHFLAG;
 import org.hotel.common.CommEnum.RESULTFLAG;
 import org.hotel.model.Org;
 import org.hotel.model.OrgMac;
@@ -53,6 +56,11 @@ public class OrgMacController extends BaseController<Org>{
 //		List<Org> orgs = orgService.findAll();
 		Cache cache = cacheManager.getCache("userCache");
 		Element element =  cache.get("LoginUserKey");
+		if(null  == element){
+			Subject currentUser = SecurityUtils.getSubject();       
+			currentUser.logout();
+			return null;
+		} 
 		User user = (User) element.getValue();
 		List<Org> orgs = orgService.findOrgListById(user.getOrgId());
 		this.orgs =orgs; 
@@ -81,6 +89,7 @@ public class OrgMacController extends BaseController<Org>{
 	public @ResponseBody Map<String,Object> addOrg(HttpServletRequest request,OrgMac orgMac){
 		Map<String,Object> map = Maps.newHashMap();
 		orgMac.setCreateUser(user.getId());
+		dealOrgMacMsg(orgMac);
 		int isSuccess = orgMacService.insert(orgMac);
 		map.put("type", isSuccess>0 ?RESULTFLAG.SUCCESS.getValue():RESULTFLAG.ERROR.getValue());
 		
@@ -91,6 +100,7 @@ public class OrgMacController extends BaseController<Org>{
 	public  @ResponseBody Map<String,Object> modifyOrgMac(HttpServletRequest request,OrgMac orgMac){
 		Map<String,Object> map = Maps.newHashMap();
 		orgMac.setModifyUser(user.getId());
+		dealOrgMacMsg(orgMac);
 		int isSuccess = orgMacService.modify(orgMac);
 		map.put("type", isSuccess>0 ?RESULTFLAG.SUCCESS.getValue():RESULTFLAG.ERROR.getValue());
 		return map;
@@ -105,28 +115,57 @@ public class OrgMacController extends BaseController<Org>{
 		return map;
 	}
 	
+	private OrgMac dealOrgMacMsg(OrgMac orgMac){
+		String orgId = orgMac.getOrgId();
+		if(!StringUtils.isEmpty(orgId)){
+			String[] idAndName = orgId.split("-");
+			orgMac.setOrgId(idAndName[0]);
+			orgMac.setOrgName(idAndName[1]);
+		}
+		if(StringUtils.isEmpty(orgMac.getOrgId())){
+			orgMac.setOrgId(user.getOrgId());
+			orgMac.setOrgName(user.getOrgName());
+		}
+		return orgMac;
+	}
+	
 	@RequestMapping(value="validate",method=RequestMethod.GET)
 	public @ResponseBody Map<String,Object> validate(HttpServletRequest request){
 		Map<String,Object> map = Maps.newHashMap();
 		try {
 			String mac = request.getParameter("mac");
 			String macName = request.getParameter("macName");
-			OrgMac isHasMac = null;
-			if(!StringUtils.isEmpty(mac)){
-				isHasMac = orgMacService.findOrgMacByMac(mac);
-				map.put("message","设备mac地址不能重复");
-			}else if(!StringUtils.isEmpty(macName)){
-				isHasMac = orgMacService.findOrgMacByMacName(macName);
-				map.put("message","设备名称不能重复");
-			}else{
+			String status = request.getParameter("status");
+			if(status.equals(AUTHFLAG.ADD.getValue())&&(StringUtils.isEmpty(mac)||StringUtils.isEmpty(macName))){
 				map.put("message","缺少必要参数");
-			}
-			if(null ==isHasMac){
 				map.put("type",RESULTFLAG.ERROR.getValue());
+				return map;
+			}else if(status.equals(AUTHFLAG.UPDATE.getValue())){
+				OrgMac isHasMac = null;
+				if(!StringUtils.isEmpty(mac)){
+					isHasMac = orgMacService.findOrgMacByMac(mac);
+					if(null !=isHasMac){
+						map.put("message","设备mac地址不能重复");
+						map.put("type",RESULTFLAG.ERROR.getValue());
+						return map;
+					}
+				}else if(!StringUtils.isEmpty(macName)){
+					isHasMac = orgMacService.findOrgMacByMacName(macName);
+					if(null !=isHasMac){
+						map.put("message","设备名称不能重复");
+						map.put("type",RESULTFLAG.ERROR.getValue());
+						return map;
+					}
+				}else{
+					map.put("message","缺少必要参数");
+					map.put("type",RESULTFLAG.ERROR.getValue());
+					return map;
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		map.put("type",RESULTFLAG.SUCCESS.getValue());
 		return map;
 	}
 }

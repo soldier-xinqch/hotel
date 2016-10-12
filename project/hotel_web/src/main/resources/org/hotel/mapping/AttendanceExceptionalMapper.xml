@@ -367,4 +367,38 @@
      	 #{item.id, jdbcType=VARCHAR}  
     </foreach> 
   </select>
+  
+   <select id="findAttendanceExceptionalByLikes" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from attendance_exceptional 
+    where del_flag=0 
+    and exception_type in 
+    <foreach close=")" collection="exceptions" index="" item="item" open="(" separator=",">  
+     	 #{item, jdbcType=VARCHAR}  
+    </foreach>
+    <if test="null != orgs and orgs.size>0 ">
+    	 and org_id in 
+	    <foreach close=")" collection="orgs" index="" item="item" open="(" separator=",">  
+	     	 #{item.id, jdbcType=VARCHAR}  
+	    </foreach> 
+    </if>
+    <if test="null != staffId and staffId.length>0">
+    	 and staff_id in 
+	    <foreach close=")" collection="staffId" index="" item="item" open="(" separator=",">  
+	     	 #{item, jdbcType=VARCHAR}
+	    </foreach> 
+    </if>
+    <if test="null !=startTime and null = endTime">
+    	and attendance_time <![CDATA[ >= ]]> #{startTime}
+    </if>
+    <if test="null ==startTime and null != endTime">
+    	and attendance_time <![CDATA[ <= ]]> #{endTime}
+    </if>
+    <if test="null !=startTime and ''!= endTime">
+    	and attendance_time between #{startTime} and #{endTime}
+    </if>
+  </select>
+  
+  
 </mapper>

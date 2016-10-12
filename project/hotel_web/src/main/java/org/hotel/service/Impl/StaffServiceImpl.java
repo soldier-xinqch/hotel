@@ -75,4 +75,9 @@ public class StaffServiceImpl implements IStaffService {
 		return staffMapper.findStaffAndMacByNoOrName(no,name,mac);
 	}
 
+	@Override
+	public List<Staff> findStaffByLikes(List<Org> orgIds, String[] staffId, String startTime, String endTime,
+			String status) {
+		return staffMapper.findStaffByLikes(orgIds,staffId,startTime,endTime,status);
+	}
 }

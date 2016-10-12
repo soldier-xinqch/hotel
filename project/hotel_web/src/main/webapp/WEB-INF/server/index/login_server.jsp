@@ -15,18 +15,18 @@
 		
 		<meta name="keywords" content=""/>
 		<meta name="description" content=""/>
-		<link type="text/css" rel="stylesheet" href="/public/css/main.css">
+		<link type="text/css" rel="stylesheet" href="../public/css/main.css">
 		<!-- 网页刷新进度条  -->
-		<link type="text/css" rel="stylesheet" href="/public/css/nprogress.css">
-		<link type="text/css" rel="stylesheet" href="/public/css/normalize.css">
-		<link type="text/css" rel="stylesheet" href="/plugins/bootstrap-3.3.0/css/bootstrap.min.css ">
+		<link type="text/css" rel="stylesheet" href="../public/css/nprogress.css">
+		<link type="text/css" rel="stylesheet" href="../public/css/normalize.css">
+		<link type="text/css" rel="stylesheet" href="../plugins/bootstrap-3.3.0/css/bootstrap.min.css ">
 		<!--  图标字体库和CSS框架  -->
-		<link rel="stylesheet" href="/plugins/font-awesome-4.6.3/css/font-awesome.css" />
-		<link rel="stylesheet" href="/public/css/ace/ace.min.css" />
-		<link rel="stylesheet" href="/public/css/ace/ace-rtl.min.css" />
-		<link rel="stylesheet" href="/public/css/ace/ace-skins.min.css" />
-		<link rel="stylesheet" href="/public/css/mycustom.css" />
-		<link rel="stylesheet" href="/plugins/lobibox/lobibox.css" />
+		<link rel="stylesheet" href="../plugins/font-awesome-4.6.3/css/font-awesome.css" />
+		<link rel="stylesheet" href="../public/css/ace/ace.min.css" />
+		<link rel="stylesheet" href="../public/css/ace/ace-rtl.min.css" />
+		<link rel="stylesheet" href="../public/css/ace/ace-skins.min.css" />
+		<link rel="stylesheet" href="../public/css/mycustom.css" />
+		<link rel="stylesheet" href="../plugins/lobibox/lobibox.css" />
 		<style style="text/css">
 		.toolbar a{
 			text-decoration:none;
@@ -41,7 +41,7 @@
 			color: #909090;
 		}
 		.login-layout{
-			background-image: url("/public/images/bg1.jpg");
+			background-image: url("../public/images/bg1.jpg");
 			background-attachment:fixed;
 		}
 		/* div.glass{ 
@@ -77,7 +77,7 @@
 												<i class="icon-coffee green"></i>
 												宏业世纪 一体化平台
 											</h3>
-											<form id="login_form" action="/login/login" method="post">
+											<form id="login_form" action="../login/login" method="post">
 												<fieldset>
 													<label class="block clearfix">
 														<span class="block input-icon input-icon-left">
@@ -281,8 +281,8 @@
 		</div><!-- /.main-container -->
 
 		<!-- basic scripts -->
-		<script type="text/javascript" src="/public/js/jquery-1.9.1/jquery.js"></script>
-		<script src="/plugins/lobibox/lobibox.js"></script> 
+		<script type="text/javascript" src="../public/js/jquery-1.9.1/jquery.js"></script>
+		<script src="../plugins/lobibox/lobibox.js"></script> 
 		<!-- <script src="/plugins/jquery-mobile/jquery.mobile-1.4.5.js"></script> -->
 		<!-- inline scripts related to this page -->
 
@@ -307,7 +307,7 @@
           		        		/* title: '登陆提示', */
           		        		msg: data.message
           		        	});
-          				 setTimeout(window.location.href="/home/index", 3000);
+          				 setTimeout(window.location.href="../home/index", 3000);
           			   }else{
           				   Lobibox.notify("error", {
           						size: 'mini',

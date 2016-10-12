@@ -10,7 +10,8 @@
     	//16:9 1.7  4:3  1.3
         aspectRatio:1.7,
         handleWindowResize:true,
-        liquid:true,
+        timezone: 'Asia/Shanghai',//设置时区
+        //theme: true,//true 时日历主题可随 jQuery ui 的主题变化
     	header:{
     		left:'prev,next today',
     		center: 'title',
@@ -38,9 +39,6 @@
         //dragRevertDuration: 拖动恢复的时间, 默认500毫秒, 表示一个不成功的拖动之后, 控件回复到原始位置的时间.
         dragRevertDuration:500,
         eventStartEditable:true,
-    	windowResize: function(view) {
-//            alert('The calendar has adjusted to a window resize');
-        },
     	/* views: {
             agendaFourDay: {
                 type: 'agenda',
@@ -93,19 +91,19 @@
     	 	                     events.push({
     	 	                    	 id:id,
     	 	                         title:title,
-    	 	                         start:evtstart,
-    	 	                         end:evtend
+    	 	                         start:moment(evtstart).format("YYYY-MM-DD HH:mm:ss"),
+    	 	                         end:moment(evtend).format("YYYY-MM-DD HH:mm:ss"),
     	 	                     });
     	 					 }
     	 					callback(events);
     	 				  }
     	 			   }else{
-    	 				   Lobibox.notify("error", {
-    	 		        		icon: false,
-    	 		        		height:'300px',
-    	 		        		title: '加载提示',
-    	 		        		msg: '加载失败，请检查添加的数据'
-    	 		        	});
+//    	 				   Lobibox.notify("error", {
+//    	 		        		icon: false,
+//    	 		        		height:'300px',
+//    	 		        		title: '加载提示',
+//    	 		        		msg: '加载失败，请检查添加的数据'
+//    	 		        	});
     	 			   }
     	 		   }
     	 		});
@@ -135,6 +133,7 @@
     		scheduleModifyDialog(event);
     	}
 	});
+    $('#calendar').fullCalendar('option', 'timezone','Asia/Shanghai');
     
 
     function add(date, allDay, jsEvent, view) {
@@ -179,8 +178,8 @@
 	                		        	});
 	                				   $('#calendar').fullCalendar('renderEvent',{
 		           					    	title:orgName+'-' +scheduleMsg,
-		           					    	start: startTime,
-		           					    	end: endTime,
+		           					    	start:moment(startTime).format("YYYY-MM-DD HH:mm:ss"),
+		           					    	end:moment(endTime).format("YYYY-MM-DD HH:mm:ss"),
 	//	           					    	color:'blue'
 	           				    		});
 	                				   $('#calendar').fullCalendar('refetchEvents'); 
@@ -314,21 +313,4 @@
 	        pickerPosition: "bottom-left"
         });
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-                 
-   
 });

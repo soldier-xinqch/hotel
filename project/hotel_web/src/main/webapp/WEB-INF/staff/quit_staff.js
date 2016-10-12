@@ -12,7 +12,8 @@
     	            method: "GET",
     	            url: "pageData",
     	            getData: function (dataJSON) {  
-    	                return { curPage: dataJSON.pageNo, totalRecords: dataJSON.pageSize,data: dataJSON.list };
+    	            	 var data = dataJSON.list;
+    	                 return { curPage: dataJSON.pageNo, totalRecords: dataJSON.total, data: data };
     	            }
     	        };
     	var colModel = [
@@ -21,7 +22,12 @@
     	        		{ title: "部门名称",dataIndx:"orgName", width: '8%', dataType: "string", align: "center" },
     	        		{ title: "状态",dataIndx:"staffStatus", width: '8%', dataType: "string", align: "center" },
     	        		{ title: "联系手机",dataIndx:"telphone", width: '8%', dataType: "string", align: "center" },
-    	        		{ title: "离职时间",dataIndx:"quitTime", width: '12%', dataType: "string", align: "center" },
+    	        		{ title: "离职时间",dataIndx:"quitTime", width: '12%', dataType: "string", align: "center",
+    	        			 render: function (ui) {
+     	         	            var rowData=ui.rowData;
+     	                     return formatDateTime(rowData.quitTime,"yyyy-MM-dd HH:mm:ss");
+    	        			 }
+    	        		},
     	        		{ title: "办理人",dataIndx:"quitCheckName", width: '10%', dataType: "date", align: "center" },
     	        		{ title: "离职原因",dataIndx:"quitDesc", width: '17%', dataType: "string", align: "center" },
     	        		{ title: "备注",dataIndx:"quitMemo", width: '20%', dataType: "string", align: "center" },
@@ -30,10 +36,10 @@
                 items: [
                     {
                         type: 'button',
-                        label: "导出至Excel",
-                        cls:'btn btn-sm btn-info',
+                        label: "导出",
+                        cls:'btn btn-sm',
                         listeners: [{"click": function (evt) {
-                        		tabId.pqGrid("exportExcel", { url: "/pro/demos/excel", sheetName: "pqGrid sheet" });
+                        	 tab_export();
                             }
                         }]
                     }
@@ -80,5 +86,39 @@
             var val = $(this).val();
             $grid.css('margin', val).pqGrid('refresh');
         });
+        function tab_export() {
+          	var delMsg = '<div class="dialog-cls"><form id="export_from" class="form-horizontal" role="form">'+$("#staff_export_dialog").html()+'</form></div>';
+          	bootbox.dialog({
+          		  message: delMsg,
+          		  title: "导出列表",
+          		  buttons: {
+          		    success: {
+          		      label: "导出",
+          		      className: "btn btn-sm btn-success",
+          		      callback: function() {
+          		    	  window.open("exportExcel?"+$("#export_from").serialize());
+          		      }
+          		    },
+          		    canle:{
+     	            	 label: "取消",
+     	                 className: "btn btn-sm btn-grey",
+     	                 callback: function () {
+     	                 }
+          		    }
+          		  }
+          		});
+          	$('#export_from .row').find(" .form-group div").find("select").pqSelect({ 
+          		selectallText:'全选',
+	    		checkbox: true,
+	    		width:'270px'
+	    	});
+          	$('.datepicker').datetimepicker({
+    			language: 'zh-CN',
+    			format: 'yyyy-mm-dd hh:ii:ss',
+    	        autoclose: true,
+    	        todayBtn: true,
+    	        pickerPosition: "bottom-left"
+            });
+          }
     });    
     

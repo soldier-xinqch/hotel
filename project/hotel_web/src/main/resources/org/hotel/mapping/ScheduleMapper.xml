@@ -10,22 +10,27 @@
     <result column="org_name" jdbcType="VARCHAR" property="orgName" />
     <result column="user_id" jdbcType="VARCHAR" property="userId" />
     <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="order_id" jdbcType="VARCHAR" property="orderId" />
+    <result column="order_name" jdbcType="VARCHAR" property="orderName" />
     <result column="create_user" jdbcType="VARCHAR" property="createUser" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modify_user" jdbcType="VARCHAR" property="modifyUser" />
     <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
     <result column="del_flag" jdbcType="TINYINT" property="delFlag" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="org.hotel.model.ScheduleWithBLOBs">
+    <result column="staff_id" jdbcType="LONGVARCHAR" property="staffId" />
     <result column="schedule_msg" jdbcType="LONGVARCHAR" property="scheduleMsg" />
     <result column="place_msg" jdbcType="LONGVARCHAR" property="placeMsg" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, schedule_name, start_time, end_time, org_id, org_name, user_id, user_name, create_user, 
-    create_time, modify_user, modify_time, del_flag
+    id, schedule_name, start_time, end_time, org_id, org_name, user_id, user_name, order_id, 
+    order_name, create_user, create_time, modify_user, modify_time, del_flag
   </sql>
   <sql id="Blob_Column_List">
-    schedule_msg, place_msg
+    staff_id, schedule_msg, place_msg
   </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
     select 
     <include refid="Base_Column_List" />
     ,
@@ -37,7 +42,23 @@
     delete from schedule
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-  <insert id="insertSelective" parameterType="org.hotel.model.Schedule">
+  <insert id="insert" parameterType="org.hotel.model.ScheduleWithBLOBs">
+    insert into schedule (id, schedule_name, start_time, 
+      end_time, org_id, org_name, 
+      user_id, user_name, order_id, 
+      order_name, create_user, create_time, 
+      modify_user, modify_time, del_flag, 
+      staff_id, schedule_msg, place_msg
+      )
+    values (#{id,jdbcType=VARCHAR}, #{scheduleName,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP}, 
+      #{endTime,jdbcType=TIMESTAMP}, #{orgId,jdbcType=VARCHAR}, #{orgName,jdbcType=VARCHAR}, 
+      #{userId,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, #{orderId,jdbcType=VARCHAR}, 
+      #{orderName,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{modifyUser,jdbcType=VARCHAR}, #{modifyTime,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=TINYINT}, 
+      #{staffId,jdbcType=LONGVARCHAR}, #{scheduleMsg,jdbcType=LONGVARCHAR}, #{placeMsg,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="org.hotel.model.ScheduleWithBLOBs">
     insert into schedule
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -64,6 +85,12 @@
       <if test="userName != null">
         user_name,
       </if>
+      <if test="orderId != null">
+        order_id,
+      </if>
+      <if test="orderName != null">
+        order_name,
+      </if>
       <if test="createUser != null">
         create_user,
       </if>
@@ -78,6 +105,9 @@
       </if>
       <if test="delFlag != null">
         del_flag,
+      </if>
+      <if test="staffId != null">
+        staff_id,
       </if>
       <if test="scheduleMsg != null">
         schedule_msg,
@@ -111,6 +141,12 @@
       <if test="userName != null">
         #{userName,jdbcType=VARCHAR},
       </if>
+      <if test="orderId != null">
+        #{orderId,jdbcType=VARCHAR},
+      </if>
+      <if test="orderName != null">
+        #{orderName,jdbcType=VARCHAR},
+      </if>
       <if test="createUser != null">
         #{createUser,jdbcType=VARCHAR},
       </if>
@@ -126,6 +162,9 @@
       <if test="delFlag != null">
         #{delFlag,jdbcType=TINYINT},
       </if>
+      <if test="staffId != null">
+        #{staffId,jdbcType=LONGVARCHAR},
+      </if>
       <if test="scheduleMsg != null">
         #{scheduleMsg,jdbcType=LONGVARCHAR},
       </if>
@@ -134,7 +173,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="org.hotel.model.Schedule">
+  <update id="updateByPrimaryKeySelective" parameterType="org.hotel.model.ScheduleWithBLOBs">
     update schedule
     <set>
       <if test="scheduleName != null">
@@ -158,6 +197,12 @@
       <if test="userName != null">
         user_name = #{userName,jdbcType=VARCHAR},
       </if>
+      <if test="orderId != null">
+        order_id = #{orderId,jdbcType=VARCHAR},
+      </if>
+      <if test="orderName != null">
+        order_name = #{orderName,jdbcType=VARCHAR},
+      </if>
       <if test="createUser != null">
         create_user = #{createUser,jdbcType=VARCHAR},
       </if>
@@ -173,6 +218,9 @@
       <if test="delFlag != null">
         del_flag = #{delFlag,jdbcType=TINYINT},
       </if>
+      <if test="staffId != null">
+        staff_id = #{staffId,jdbcType=LONGVARCHAR},
+      </if>
       <if test="scheduleMsg != null">
         schedule_msg = #{scheduleMsg,jdbcType=LONGVARCHAR},
       </if>
@@ -182,8 +230,47 @@
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="org.hotel.model.ScheduleWithBLOBs">
+    update schedule
+    set schedule_name = #{scheduleName,jdbcType=VARCHAR},
+      start_time = #{startTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP},
+      org_id = #{orgId,jdbcType=VARCHAR},
+      org_name = #{orgName,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=VARCHAR},
+      user_name = #{userName,jdbcType=VARCHAR},
+      order_id = #{orderId,jdbcType=VARCHAR},
+      order_name = #{orderName,jdbcType=VARCHAR},
+      create_user = #{createUser,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_user = #{modifyUser,jdbcType=VARCHAR},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      del_flag = #{delFlag,jdbcType=TINYINT},
+      staff_id = #{staffId,jdbcType=LONGVARCHAR},
+      schedule_msg = #{scheduleMsg,jdbcType=LONGVARCHAR},
+      place_msg = #{placeMsg,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.hotel.model.Schedule">
+    update schedule
+    set schedule_name = #{scheduleName,jdbcType=VARCHAR},
+      start_time = #{startTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP},
+      org_id = #{orgId,jdbcType=VARCHAR},
+      org_name = #{orgName,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=VARCHAR},
+      user_name = #{userName,jdbcType=VARCHAR},
+      order_id = #{orderId,jdbcType=VARCHAR},
+      order_name = #{orderName,jdbcType=VARCHAR},
+      create_user = #{createUser,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_user = #{modifyUser,jdbcType=VARCHAR},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      del_flag = #{delFlag,jdbcType=TINYINT}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
   
-  <select id="findAll" parameterType="java.lang.String" resultMap="BaseResultMap">
+  <select id="findAll" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
     select 
     <include refid="Base_Column_List" />
     ,
@@ -192,9 +279,11 @@
     where del_flag=0
   </select>
   
-  <select id="findScheduleByOrgs" parameterType="java.util.List" resultMap="BaseResultMap">
+  <select id="findScheduleByOrgs" parameterType="java.util.List" resultMap="ResultMapWithBLOBs">
     select 
     <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
     from schedule
     where  del_flag=0 and org_id in 
     <foreach close=")" collection="orgs" index="" item="item" open="(" separator=",">  

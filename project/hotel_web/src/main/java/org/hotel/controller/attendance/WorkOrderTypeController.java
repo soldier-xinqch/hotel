@@ -1,6 +1,5 @@
 package org.hotel.controller.attendance;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import net.sf.ehcache.Cache;
@@ -125,27 +125,40 @@ public class WorkOrderTypeController extends BaseController<WorkOrderType>{
 		return workOrderType;
 	}
 	
-	@RequestMapping(value="exportWorkType")
-	public @ResponseBody void exportExcels(HttpServletRequest request,HttpServletResponse response){
+	@RequestMapping(value="exportExcel",method=RequestMethod.GET)
+	public @ResponseBody String exportExcels(HttpServletRequest request,HttpServletResponse response){
 		try{
 			response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"); 
-	        response.setHeader("Content-Disposition", "attachment;filename="+ new String(("排班类型"+new Date()+".xlsx").getBytes(), "utf-8"));
-	        
+	        response.setHeader("Content-Disposition", "attachment;filename="+ new String(("staff" + ".xlsx").getBytes(), "utf-8"));
+	        String orgId = request.getParameter("orgId");
+	        String[] staffField = new String[]{"班次名称-OrderName","班次描述-OrderDesc","所属部门-OrgName"};
+	        String[] columnNames = new String[staffField.length];
+	        String[] methodNames = new String[staffField.length];
+	        for (int i = 0; i < staffField.length; i++) {
+				String[] temps = staffField[i].split("-");
+				columnNames[i] = temps[0];
+				methodNames[i] = "get"+temps[1];
+			}
+	        List<Org> orgIds = null;
+	        if(!StringUtils.isEmpty(orgIds)){
+	        	orgIds = Lists.newArrayList();
+	        	Org org = new Org();
+	        	org.setId(orgId);
+	        }else{
+	        	orgIds = orgs;
+	        }
 	        List<WorkOrderType> workOrders = workOrderTypeService.findWorkOrdersByOrgs(orgs);
-	        String[] columnNames = {"orderName","orgName","orderDesc"};
-	        String[] methodNames = {"getOrderName","getOrgName","getOrderDesc"};
 	        // 生成ExcelEntity实体，包含4个必备参数
-	        ExcelEntity<WorkOrderType> excelEntity = new ExcelEntity<WorkOrderType>(null, columnNames, methodNames, workOrders);
+	        ExcelEntity<WorkOrderType> excelEntity = new ExcelEntity<WorkOrderType>("", columnNames, methodNames, workOrders);
+	        excelEntity.setHeader("班次信息");
 	        Workbook excel = ExportExcelUtils.export2Excel(excelEntity);
-	        
 	        ServletOutputStream outputStream = response.getOutputStream();
 	        ExportExcelUtils.saveWorkBook2007(excel, excelEntity.getFileName(), outputStream);
-//	        ExportExcelUtils.exportExcelX("123123213",headMap,ja,null,0,outputStream);
-	        // 清除缓存
 	        outputStream.flush();
 	        outputStream.close();
 	    }catch (Exception e) {
 	        e.printStackTrace();
 	    }
+		return urlStr;
 	}
 }

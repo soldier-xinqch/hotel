@@ -7,8 +7,9 @@ import java.util.Date;
 import org.springframework.format.annotation.DateTimeFormat;
 
 public class Staff implements Serializable {
+	
     private String id;
-
+    
     private String staffNo;
 
     private String staffName;
@@ -52,7 +53,7 @@ public class Staff implements Serializable {
     private Byte delFlag;
 
     private String staffStatus;
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") 
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")  
     private Date quitTime;
 
     private String quitCheckId;

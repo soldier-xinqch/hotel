@@ -28,4 +28,6 @@ public interface StaffMapper {
 	List<Staff> findStaffAndMac(@Param("status") String status,@Param("mac") String mac);
 
 	Staff findStaffAndMacByNoOrName(@Param("no") String no,@Param("name") String name,@Param("mac") String mac);
+
+	List<Staff> findStaffByLikes(@Param("orgIds") List<Org> orgIds,@Param("staffId") String[] staffId,@Param("startTime") String startTime,@Param("endTime") String endTime,@Param("status") String status);
 }

@@ -5,6 +5,9 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
+import org.hotel.common.CommEnum.AUTHFLAG;
 import org.hotel.common.CommEnum.RESULTFLAG;
 import org.hotel.model.Org;
 import org.hotel.model.Role;
@@ -56,6 +59,11 @@ public class UserController {
 //		List<Org> orgs = orgService.findAll();
 		Cache cache = cacheManager.getCache("userCache");
 		Element element =  cache.get("LoginUserKey");
+		if(null  == element){
+			Subject currentUser = SecurityUtils.getSubject();       
+			currentUser.logout();
+			return null;
+		} 
 		User user = (User) element.getValue();
 		List<Org> orgs = orgService.findOrgListById(user.getOrgId());
 		this.orgs =orgs; 
@@ -108,13 +116,6 @@ public class UserController {
 	@RequestMapping(value="modifyUser",method=RequestMethod.POST)
 	public  @ResponseBody Map<String,Object> modifyOrg(HttpServletRequest request,User user){
 		Map<String,Object> map = Maps.newHashMap();
-		String[] roleIds = request.getParameterValues("roleId");
-		System.out.println(roleIds.toString());
-		String roleId = "";
-		for (String string : roleIds) {
-			roleId+=string+",";
-		}
-		user.setRoleDesc(roleId);
 		dealUserMsg(user);
 		user.setModifyUser(user.getId());
 		int isSuccess = userService.modify(user);
@@ -142,14 +143,36 @@ public class UserController {
 		map.put("type", isSuccess>0 ?RESULTFLAG.SUCCESS.getValue():RESULTFLAG.ERROR.getValue());
 		return map;
 	}
+	@RequestMapping(value="validate",method=RequestMethod.GET)
+	public @ResponseBody Map<String,Object> validate(HttpServletRequest request){
+		Map<String,Object> map = Maps.newHashMap();
+		try {
+			String username = request.getParameter("username");
+			String status = request.getParameter("status");
+			if(status.equals(AUTHFLAG.ADD.getValue())&&(StringUtils.isEmpty(username))){
+				map.put("message","缺少必要参数");
+				map.put("type",RESULTFLAG.ERROR.getValue());
+				return map;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		map.put("type",RESULTFLAG.SUCCESS.getValue());
+		return map;
+	}
 	
-	private User dealUserMsg(User user){
-		String orgId = user.getOrgId();
+	
+	private User dealUserMsg(User users){
+		String orgId = users.getOrgId();
 		if(!StringUtils.isEmpty(orgId)){
 			String[] idAndName = orgId.split("-");
-			user.setOrgId(idAndName[0]);
-			user.setOrgName(idAndName[1]);
+			users.setOrgId(idAndName[0]);
+			users.setOrgName(idAndName[1]);
 		}
-		return user;
+		if(StringUtils.isEmpty(users.getOrgId())){
+			users.setOrgId(user.getOrgId());
+			users.setOrgName(user.getOrgName());
+		}
+		return users;
 	}
 }

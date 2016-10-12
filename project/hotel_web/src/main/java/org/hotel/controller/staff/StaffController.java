@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.hotel.common.BaseController;
 import org.hotel.common.CommEnum.RESULTFLAG;
 import org.hotel.common.CommEnum.STAFFSTATUS;
@@ -27,6 +29,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import net.sf.ehcache.Cache;
@@ -54,49 +57,68 @@ public class StaffController extends BaseController<Staff>{
 //		List<Org> orgs = orgService.findAll();
 		Cache cache = cacheManager.getCache("userCache");
 		Element element =  cache.get("LoginUserKey");
+		if(null  == element){
+			Subject currentUser = SecurityUtils.getSubject();       
+			currentUser.logout();
+			return null;
+		} 
 		User user = (User) element.getValue();
 		List<Org> orgs = orgService.findOrgListById(user.getOrgId());
+		List<Staff> staffs = staffService.findStaffByOrgs(orgs,STAFFSTATUS.WORKING.getValue());
 		this.orgs =orgs; 
 		this.user =user; 
 		request.setAttribute("orgs", orgs);
+		request.setAttribute("staffs", staffs);
 		request.setAttribute("menuKey", urlStr+"index");
 		return "staff/staff";
 	}
 	
-	@RequestMapping(value="exportExcel1")
-	public @ResponseBody void exportExcels(HttpServletRequest request,HttpServletResponse response){
+	@RequestMapping(value="exportExcel",method=RequestMethod.GET)
+	public @ResponseBody String exportExcels(HttpServletRequest request,HttpServletResponse response){
 		try{
 			response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"); 
-	        //response.setContentType("octets/stream");
 	        response.setHeader("Content-Disposition", "attachment;filename="+ new String(("staff" + ".xlsx").getBytes(), "utf-8"));
+	        String startTime = request.getParameter("startTime");
+	        String endTime = request.getParameter("endTime");
+	        String[] staffField = request.getParameterValues("staffField");
+	        String[] staffId = request.getParameterValues("staffId");
+	        String orgId = request.getParameter("orgId");
+	        if(null == null){
+	        	staffField = new String[]{"员工编号-StaffNo","员工姓名-StaffName","所属部门-OrgName","性别-Sex","身份证-CardId","员工卡号-StaffCardNo","入职时间-IntoTime","联系电话-Telphone","联系地址-StaffAddress","联系邮箱-Email","员工生日-Birthday","年假-YearRestDay","存休-KeepRestDay"};
+	        }
 	        
-	        
-	        List<Org> winds = orgService.findAll();
-	        String[] columnNames = { "id"};
-	        String[] methodNames = { "getId"};
-//	      String fileName = "d:/temp/excel1.xlsx";
-	        String fileName = "d:/excel1.xlsx";
+	        String[] columnNames = new String[staffField.length];
+	        String[] methodNames = new String[staffField.length];
+	        for (int i = 0; i < staffField.length; i++) {
+				String[] temps = staffField[i].split("-");
+				columnNames[i] = temps[0];
+				methodNames[i] = "get"+temps[1];
+			}
+	        List<Org> orgIds = null;
+	        if(!StringUtils.isEmpty(orgIds)){
+	        	orgIds = Lists.newArrayList();
+	        	Org org = new Org();
+	        	org.setId(orgId);
+	        }else{
+	        	orgIds = orgs;
+	        }
+	        List<Staff> staffs = staffService.findStaffByLikes(orgIds,staffId,startTime,endTime,STAFFSTATUS.WORKING.getValue());
 	        // 生成ExcelEntity实体，包含4个必备参数
-	        ExcelEntity<Org> excelEntity = new ExcelEntity<Org>(fileName, columnNames, methodNames, winds);
-	        //excelEntity.setHeader("题头");
+	        ExcelEntity<Staff> excelEntity = new ExcelEntity<Staff>("", columnNames, methodNames, staffs);
+	        excelEntity.setHeader("员工信息");
 	        //excelEntity.setFooter("脚注");
 	        Workbook excel = ExportExcelUtils.export2Excel(excelEntity);
 	        //ExcelExporter.export2Excel("题头","脚注", "sheet1", columnNames, methodNames, winds);//也可以这样调用,无需新建ExcelEntity对象
 	        //将Workbook存为文件
 //	        ExportExcelUtils.saveWorkBook2007(excel, excelEntity.getFileName());
-	         
-//	        System.out.println("导出完成！");
-	        
-	        
 	        ServletOutputStream outputStream = response.getOutputStream();
 	        ExportExcelUtils.saveWorkBook2007(excel, excelEntity.getFileName(), outputStream);
-//	        ExportExcelUtils.exportExcelX("123123213",headMap,ja,null,0,outputStream);
-	        // 清除缓存
 	        outputStream.flush();
 	        outputStream.close();
 	    }catch (Exception e) {
 	        e.printStackTrace();
 	    }
+		return urlStr;
 	}
 	
 	@RequestMapping(value="/pageData",method=RequestMethod.GET)

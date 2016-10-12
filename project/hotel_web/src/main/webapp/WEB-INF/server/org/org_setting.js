@@ -8,7 +8,8 @@
 	            method: "GET",
 	            url: "pageData",
 	            getData: function (dataJSON) {  
-	                return { curPage: dataJSON.pageNo, totalRecords: dataJSON.pageSize,data: dataJSON.list };
+	            	var data = dataJSON.list;
+	                return { curPage: dataJSON.pageNo, totalRecords: dataJSON.total, data: data };
 	            }
 	        };
 	var colModel = [
@@ -150,8 +151,9 @@
 	                 label: "保存",
 	                 className: "btn btn-sm btn-success",
 	                 callback: function () {
-	                	 
-	                	 
+	                	 if(vailDateParam('ADD')){
+	                		 return false;
+	                	 }
  	                	 $.ajax({
 	                		   type: "POST",
 	                		   url: "addOrg",
@@ -271,5 +273,29 @@
         		});
             return null;
         }
+    }
+    function vailDateParam(status){
+    	var isSuccess;
+    	var orgName = $('form input[name=orgName]').val();
+    	$.ajax({
+    		   type: "GET",
+    		   url: "validate",
+    		   async: false,
+    		   data: "orgName="+orgName+"&status="+status,
+    		   success: function(data){
+    			   if('success' != data.type){
+    				   Lobibox.notify("error", {
+    					   	size: 'mini',
+    		        		position: 'center top',
+    		        		msg: data.message
+    		        	});
+    				  isSuccess=true;
+    			   }
+    			   if('success'==data.type){
+    				   isSuccess=false;
+    			   }
+    		   }
+    		});
+    	return isSuccess;
     }
 });    

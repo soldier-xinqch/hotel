@@ -48,5 +48,12 @@ public class AttendanceExceptionalServiceImpl implements IAttendanceExceptionalS
 	public List<AttendanceExceptional> findAttendanceExceptionalByOrgs(List<Org> orgs) {
 		return attendanceExceptionalMapper.findAttendanceExceptionalByOrgs(orgs);
 	}
+
+	@Override
+	public List<AttendanceExceptional> findAttendanceExceptionalByLikes(List<Org> orgs, List<String> exceptions,
+			String[] staffId, String startTime, String endTime) {
+		// TODO Auto-generated method stub
+		return attendanceExceptionalMapper.findAttendanceExceptionalByLikes(orgs,exceptions,staffId,startTime,endTime);
+	}
 	
 }

@@ -18,10 +18,10 @@
       <div class="form-group">
      		<label class="col-sm-3 control-label">选择员工</label>
       		<div class="col-sm-9">
-      		<select class="form-control input-xlarge"  name="userId" multiple="multiple" data-placeholder="请选择员工信息">
+      		<select class="form-control input-xlarge"  name="staffId" multiple="multiple" data-placeholder="请选择员工信息">
        		<c:if test="${null != staffs}">
 				<c:forEach items="${staffs}" var="staff">
-			    	 <option value="${staff.id}-${staff.staffName}">${staff.staffName}</option>
+			    	 <option value="${staff.id}-${staff.staffNo}-${staff.staffName}">${staff.staffName}</option>
 				</c:forEach>
 			</c:if>
        	</select>
@@ -30,7 +30,7 @@
       <div class="form-group">
       		<label class="col-sm-3 control-label">选择排班</label>
        		<div class="col-sm-9">
-       		<select class="form-control input-xlarge"  name="scheduleMsg" data-placeholder="请选择排班信息">
+       		<select class="form-control input-xlarge"  name="orderId" data-placeholder="请选择排班信息">
         		<option value=""></option>
         		<c:if test="${null != workOrders}">
 					<c:forEach items="${workOrders}" var="workOrder">

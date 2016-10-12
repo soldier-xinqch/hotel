@@ -1,6 +1,5 @@
 package org.hotel.controller.attendance;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +30,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import net.sf.ehcache.Cache;
@@ -140,30 +140,48 @@ public class WorkOrderController extends BaseController<WorkOrder>{
 		}
 		return workOrder;
 	}
-	@RequestMapping(value="exportWorkOrder")
-	public @ResponseBody void exportExcels(HttpServletRequest request,HttpServletResponse response){
+	
+	@RequestMapping(value="exportExcel",method=RequestMethod.GET)
+	public @ResponseBody String exportExcels(HttpServletRequest request,HttpServletResponse response){
 		try{
 			response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"); 
-	        response.setHeader("Content-Disposition", "attachment;filename="+ new String(("排班类型"+new Date()+".xlsx").getBytes(), "utf-8"));
-	        
+	        response.setHeader("Content-Disposition", "attachment;filename="+ new String(("staff" + ".xlsx").getBytes(), "utf-8"));
+	        String orgId = request.getParameter("orgId");
+        	String[] staffField = new String[]{"班次编号-OrderNo","班次类型-WorkTypeName","所属部门-OrgName","上班起始-OnStart","上班时间-BeginWork","迟到终止-OnEnd",
+        			"早退起始-OffStart","下班时间-EndWork","下班终止-OffEnd","下1时间-OffOtherTime","上2时间-OnOtherTime","工时-WorkTime","早餐-Breakfast",
+        			"午餐-Lunch","晚餐-Dinner","夜餐-NightEating","次日餐次-TomorrowEatNum"};
+	        String[] columnNames = new String[staffField.length];
+	        String[] methodNames = new String[staffField.length];
+	        for (int i = 0; i < staffField.length; i++) {
+				String[] temps = staffField[i].split("-");
+				columnNames[i] = temps[0];
+				methodNames[i] = "get"+temps[1];
+			}
+	        List<Org> orgIds = null;
+	        if(!StringUtils.isEmpty(orgIds)){
+	        	orgIds = Lists.newArrayList();
+	        	Org org = new Org();
+	        	org.setId(orgId);
+	        }else{
+	        	orgIds = orgs;
+	        }
 	        List<WorkOrder> workOrders = workOrderService.findWorkOrdersByOrgs(orgs);
-	        String[] columnNames = {"orderNo","beginWork","endWork","beginElasticTime","endElasticTime","workTime","workType","workTypeName","breakfast",
-	        		"workDesc","orgName","onStart","onEnd","offStart","offEnd","offOtherTime","onOtherTime","lunch","dinner","nightEating","tomorrowEatNum"};
-	        String[] methodNames = {"getOrderNo","getBeginWork","getEndWork","getBeginElasticTime","getEndElasticTime","getWorkTime","getWorkType","getWorkTypeName","getBreakfast"
-	        		,"getLunch","getDinner","getNightEating","getTomorrowEatNum","getWorkDesc","getOrgName","getOnStart","getOnEnd",
-	        		"getOffStart","getOffEnd","getOffOtherTime","getOnOtherTime"};
 	        // 生成ExcelEntity实体，包含4个必备参数
-	        ExcelEntity<WorkOrder> excelEntity = new ExcelEntity<WorkOrder>(null, columnNames, methodNames, workOrders);
+	        ExcelEntity<WorkOrder> excelEntity = new ExcelEntity<WorkOrder>("", columnNames, methodNames, workOrders);
+	        excelEntity.setHeader("员工信息");
+	        //excelEntity.setFooter("脚注");
 	        Workbook excel = ExportExcelUtils.export2Excel(excelEntity);
-	        
+	        //ExcelExporter.export2Excel("题头","脚注", "sheet1", columnNames, methodNames, winds);//也可以这样调用,无需新建ExcelEntity对象
+	        //将Workbook存为文件
+//	        ExportExcelUtils.saveWorkBook2007(excel, excelEntity.getFileName());
 	        ServletOutputStream outputStream = response.getOutputStream();
 	        ExportExcelUtils.saveWorkBook2007(excel, excelEntity.getFileName(), outputStream);
-	        // 清除缓存
 	        outputStream.flush();
 	        outputStream.close();
 	    }catch (Exception e) {
 	        e.printStackTrace();
 	    }
+		return urlStr;
 	}
 	
 }
