@@ -77,6 +77,8 @@
 <script src="../plugins/clockpicker/bootstrap-clockpicker.min.js"></script> 
 <script src="../plugins/bootstrapValidation/jqBootstrapValidation.js"></script> 
 <script src="../plugins/zTree/js/jquery.ztree.all.js"></script> 
+<script src="../plugins/icheck/icheck.min.js"></script> 
+<script src="../public/js/password.js"></script> 
 
 <script src="../public/js/date.js"></script>
 <script src="../public/js/orgtree.js"></script>

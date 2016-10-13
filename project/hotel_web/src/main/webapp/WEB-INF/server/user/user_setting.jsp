@@ -55,6 +55,12 @@ tr.pq-row-delete td
 .ui-button{
 	margin: 5 0px;
 }
+.input-group .form-control{
+	width: 270px;
+}
+.input-group-addon, .input-group-btn{
+	width: 0px;
+}
 		</style>
 	</head>
 

@@ -22,6 +22,8 @@ public class RoleAuth implements Serializable {
 
     private Byte delFlag;
 
+    private String elements;
+
     private static final long serialVersionUID = 1L;
 
     public String getId() {
@@ -95,4 +97,12 @@ public class RoleAuth implements Serializable {
     public void setDelFlag(Byte delFlag) {
         this.delFlag = delFlag;
     }
+
+	public String getElements() {
+		return elements;
+	}
+
+	public void setElements(String elements) {
+		this.elements = elements;
+	}
 }

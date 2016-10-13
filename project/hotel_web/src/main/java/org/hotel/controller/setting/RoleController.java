@@ -26,6 +26,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
@@ -58,9 +60,11 @@ public class RoleController {
 	private List<Org> orgs;
 	
 	private User user;
+	private String json;
 	
-	public List<Menu> getUserMenus(){
+	public Map<String,Object> getUserMenus(){
 		List<String> menuIds= Lists.newArrayList();
+		Map<String,Object> map = Maps.newHashMap();
 		try {
 			Cache cache = cacheManager.getCache("userCache");
 			Element element =  cache.get("LoginUserKey");
@@ -83,14 +87,15 @@ public class RoleController {
 							menuIds.add(menuId);
 						}
 					}
+					map.put("authElements", roleAuth.getElements());
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 
-		return menuService.findMenuByIds(menuIds);
+		map.put("dataList", menuService.findMenuByIds(menuIds));
+		return map;
 	}
-
 
 	@RequestMapping(value="index",method=RequestMethod.GET)
 	public String roleIndex(HttpServletRequest request){
@@ -106,7 +111,10 @@ public class RoleController {
 		this.orgs =orgs; 
 		this.user =user; 
 		request.setAttribute("orgs", orgs);
-		List<Menu> menus = getUserMenus();
+		Map<String, Object> map = getUserMenus();
+		List<Menu> menus = (List<Menu>) map.get("dataList");
+		String json = (String) map.get("authElements");
+		this.json = json;
 //		List<Menu> menus = menuService.findMenuByOrgs(orgs);
 		request.setAttribute("menuList", menus);
 		request.setAttribute("menuKey", urlStr+"index");
@@ -125,6 +133,8 @@ public class RoleController {
 		map.put("pageSize", baseInfos.getPageSize());
 		map.put("pageNo", baseInfos.getPageNum());
 		map.put("total", baseInfos.getTotal());
+		Map<String,String> map1 = (Map<String,String>)JSON.parse(json); 
+		map.put("authElements", map1);
 		return map;
 	}
 	
@@ -184,6 +194,8 @@ public class RoleController {
 			String roleId = request.getParameter("roleId");
 			String authId = request.getParameter("authId");
 			String[] authElement = request.getParameterValues("authElement");
+			Map<String,String> requestMap = request.getParameterMap();
+			String json = JSONObject.toJSONString(requestMap, true);
 			RoleAuth auth = new RoleAuth();
 			auth.setRoleId(authId);
 			List<String> authElements = Lists.newArrayList();
@@ -200,6 +212,7 @@ public class RoleController {
 			auth.setRoleId(roleId);
 			auth.setElementId(element.toString());
 			auth.setOperateFlag(AUTHFLAG.SEARCH.getValue());
+			auth.setElements(json);
 			int isSuccess = 0;
 			if(StringUtils.isEmpty(auth.getId())){
 				isSuccess = roleAuthService.insert(auth);

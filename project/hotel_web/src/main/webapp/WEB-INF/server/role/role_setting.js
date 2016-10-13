@@ -1,6 +1,28 @@
 ﻿﻿    $(function () {
     	//首先定义表格选项
 	var tabId = $("#role_grid");
+	var addBtn = { type: 'button', label: '添加', listeners: [{ click: tab_addRow}], cls: 'btn btn-sm btn-success' };
+	var modifyBtn ={ type: 'button', label: '修改', listeners: [{ click:tab_editRow}], cls: 'btn btn-sm btn-primary' };
+	var delBtn = { type: 'button', label: '删除', listeners: [{ click: tab_deleteRow}], cls: 'btn btn-sm btn-danger' };
+	var item =[];
+	 $.ajax({
+		   type: "GET",
+		   url: "searchRoleAuth",
+		   data: {"id":rowData.id},
+		   success: function(data){
+			   if(null !=dataJSON.authElements){
+          		 $.each(dataJSON.authElements, function(key, value){
+//      		        alert(key+":"+value);
+      		        if(('${menuKey}'+'-ADD')  ==key)item.push(addBtn);
+          			if('${menuKey}'+'-MODIFY' ==key)item.push(modifyBtn);
+      				if('${menuKey}'+'-DELETE' ==key)item.push(delBtn);
+//              		if('${menuKey}'+'-SEARCH' ==key)item.push(searchBtn);
+//          			if('${menuKey}'+'-EXPORT' ==key)item.push(exportBtn);
+      		     });
+          		 alert(item);
+          	}
+		   }
+		});
 	var dataModel = {
 			 	cache: true,
 //    	            recIndx: "customerid",
@@ -16,6 +38,7 @@
 	                return { curPage: dataJSON.pageNo, totalRecords: dataJSON.total, data: data };
 	            }
 	        };
+	alert(item);
 	var colModel = [
 	                { title: "角色名称",dataIndx:"roleName", width: '25%', dataType: "string", align: "center" },
 	        		{ title: "角色标识",dataIndx:"roleKey", width: '25%', dataType: "string", align: "center"},
@@ -38,11 +61,12 @@
 	                }
 	        	];
 	var tab_toolbar = {
-            items: [
-                { type: 'button', label: '添加', listeners: [{ click: tab_addRow}], cls: 'btn btn-sm btn-success' },
-                { type: 'button', label: '修改', listeners: [{ click:tab_editRow}], cls: 'btn btn-sm btn-primary' },
-                { type: 'button', label: '删除', listeners: [{ click: tab_deleteRow}], cls: 'btn btn-sm btn-danger' }
-            ]
+			  items:item
+//            items: [
+//                { type: 'button', label: '添加', listeners: [{ click: tab_addRow}], cls: 'btn btn-sm btn-success' },
+//                { type: 'button', label: '修改', listeners: [{ click:tab_editRow}], cls: 'btn btn-sm btn-primary' },
+//                { type: 'button', label: '删除', listeners: [{ click: tab_deleteRow}], cls: 'btn btn-sm btn-danger' }
+//            ]
         };
 	
     var obj = { 
@@ -369,6 +393,34 @@
 	    	$('#auth_from input[name=roleId]').val(rowData.id);
 	    	$('#auth_from input[name=authId]').val(authId);
 //        	$('#auth_from select[name=authElement]').val(row.authElement);
+	    	$("#auth_from .list-group-item").find('.menu').bind("click",function(){
+	    		if($(this).is(":checked")){
+	    			if($(this).hasClass("main")){
+	    				$("#auth_from .list-group-item ."+$(this).attr("id")).parents(".list-group-item").find(".lbl").trigger("click");
+	    				$("#auth_from .list-group-item").find("."+$(this).attr("id")).attr("checked",true);
+	    				$("#auth_from .list-group-item ."+$(this).attr("id")).parents(".list-group-item").find("input[type=checkbox]").attr("checked",true);
+	    			}else{
+	    				$(this).parents(".list-group-item").find(".lbl").trigger("click");
+	    				$(this).parents(".list-group-item").find("input[type=checkbox]").attr("checked",true);
+	    			}
+	    			$(this).parents(".list-group-item").find("input[type=checkbox]").attr("checked",true);
+	    		}else{
+	    			$(this).parents(".list-group-item").find("input[type=checkbox]").removeAttr("checked");
+	    			$("#auth_from .list-group-item").find("."+$(this).attr("id")).removeAttr("checked");
+	    			$("#auth_from .list-group-item ."+$(this).attr("id")).parents(".list-group-item").find("input[type=checkbox]").removeAttr("checked");
+	    		}
+	    	});
+//	    	$("#auth_from .list-group-item .right").find('input[type=checkbox]').bind("click",function(){
+//	    		if($(this).is(":checked")){
+//	    			$(this).parents(".list-group-item input[name=authElement]").find(".lbl").trigger("click");
+//	    			alert($(this).parents(".list-group-item").find("input[name=authElement]").is(":checked"));
+//	    			alert($(this).parents(".list-group-item .lbl").html());
+//	    			if(!$(this).parents(".list-group-item").find("input[name=authElement]").is(":checked")){
+//	    				$(this).parents(".list-group-item").find("input[name=authElement]").attr("checked",true);
+//	    			}
+//	    		}
+//	    	});
+	    	
     }
     //delete Row.
     function freezeRole() {

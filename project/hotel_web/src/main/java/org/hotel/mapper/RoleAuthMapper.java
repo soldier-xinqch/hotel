@@ -11,5 +11,5 @@ public interface RoleAuthMapper {
 
     int updateByPrimaryKeySelective(RoleAuth record);
 
-	RoleAuth findRoleAuthByRoleId(String roleId);
-}
+	RoleAuth findRoleAuthByRoleId(String roleId); 
+} 

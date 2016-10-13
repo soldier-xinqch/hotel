@@ -4,6 +4,7 @@
 //	deselect: false,
 //	width:'270px'
 //});
+	
     	//首先定义表格选项
 var tabId = $("#user_grid");
 var dataModel = {
@@ -202,6 +203,7 @@ function tab_editRow() {
 function updateMeuns(row){
 	$('#update_tab_from input[name=id]').val(row.id);
 	$('#update_tab_from input[name=username]').val(row.username);
+	$('#update_tab_from input[name=olPpassword]').val(row.password);
 	$('#update_tab_from input[name=nickName]').val(row.nickName);
 	$('#update_tab_from input[name=realName]').val(row.realName);
 	$('#update_tab_from input[name=email]').val(row.email);
@@ -212,7 +214,13 @@ function updateMeuns(row){
           checkbox: false, //adds checkbox to options   
           selectallText:'全选',
           width:'270px'
-      }).pqSelect('close');  
+      }).pqSelect('close'); 
+   $("#update_tab_from #newPasswd").html('新密码')
+   $("#update_tab_from #password").password({
+	    eyeClass: 'fa fa-eye',
+	    eyeOpenClass: 'fa-eye',
+	    eyeCloseClass: 'fa-eye-slash'
+	});
 }
 //append Row
 function tab_addRow() {
@@ -267,6 +275,12 @@ function tab_addRow() {
     	callback:setTimeout(selectInput,200)
     });
     $("#popup-dialog-crud").dialog("open");
+    $("#add_tab_from #password").password({
+	    eyeClass: 'fa fa-eye',
+	    eyeOpenClass: 'fa-eye',
+	    eyeCloseClass: 'fa-eye-slash'
+	});
+    $("#add_tab_from .oldPasswd").hide()
 }
 function selectInput(){
 //    	$('#add_tab_from .row').find(" .form-group div").find("select").select2();
